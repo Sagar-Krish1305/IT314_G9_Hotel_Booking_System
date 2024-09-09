@@ -2,7 +2,6 @@
 This is IT314 Project of G9.
 
 Team Members :
-
 1. 202201112 - Abhinav 
 2. 202201131 - Praneel Vania
 3. 202201136 - Harsh Shah
