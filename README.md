@@ -1,7 +1,8 @@
 # IT314_G9_Hotel_Booking_System
-This is IT314 Project of G9.
+This is IT314 Project - Hotel_Booking_System of G9.
 
-Team Members
+<h1>Team Members :</h1>
+
 1. 202201112 - Abhinav 
 2. 202201131 - Praneel Vania
 3. 202201136 - Harsh Shah
