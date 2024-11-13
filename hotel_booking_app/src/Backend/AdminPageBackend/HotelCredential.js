@@ -1,63 +1,12 @@
 import mongoose from 'mongoose';
 import generateUniqueId from 'generate-unique-id';
 
-export class HotelCredential{
-    constructor(name, xCoord, yCoord, address, phoneNumber, email, minPrice, maxPrice) {
-        this.name = name;
-        this.xCoord = xCoord;
-        this.yCoord = yCoord;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.minPrice = minPrice;
-        this.maxPrice = maxPrice;
-        this.hotelID = generateUniqueId({
-            length: 32,
-            useLetters: true,
-            useNumbers: true,
-        });
-    }
+// Connect to MongoDB only once, not every time a hotel is created
+mongoose.connect('mongodb://localhost:27017/hotelDB')
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => console.error('MongoDB connection error:', err));
 
-    // Method to display hotel details
-    displayDetails() {
-        return `
-            Hotel Name: ${this.name}
-            Hotel ID: ${this.hotelID}
-            Address: ${this.address}
-            Phone Number: ${this.phoneNumber}
-            Email: ${this.email}
-            Coordinates: (${this.xCoord}, ${this.yCoord})
-        `;
-    }
-
-    async saveDetails(){
-
-        try {
-            const newHotel = new Hotel({
-                name: this.name,
-                location: {
-                    type: 'Point',
-                    coordinates: [this.xCoord, this.yCoord],
-                },
-                minPrice: this.minPrice,
-                maxPrice: this.maxPrice,
-                hotelID: this.hotelID,
-                email: this.email,
-                phoneNumber: this.phoneNumber,
-                address: this.address,
-            });
-            await newHotel.save();
-        } catch (error) {
-            console.error('Error adding hotel:', error);
-        }
-    }
-}
-
-mongoose.connect('mongodb://localhost:27017/hotelDB') // DO NOT CONNECT EVERY TIME
-        .then(() => console.log('Connected to MongoDB'))
-        .catch((err) => console.error('MongoDB connection error:', err));
-
-        
+// Define the hotel schema
 const hotelDetailsSchema = new mongoose.Schema({
     name: String,
     location: {
@@ -71,14 +20,68 @@ const hotelDetailsSchema = new mongoose.Schema({
     email: String,
     phoneNumber: String,
     address: String,
-})
+});
+hotelDetailsSchema.index({ location: '2dsphere' });
+const Hotel = mongoose.model('hotelDetails', hotelDetailsSchema);
 
-hotelDetailsSchema.index({ location: '2dsphere' })
+console.log("Schema is Made");
 
-const Hotel = new mongoose.model('hotelDetails', hotelDetailsSchema)
-console.log("Schema is Made")
+// Function to create a new hotel with provided details
+function createHotel(name, xCoord, yCoord, address, phoneNumber, email, minPrice, maxPrice) {
+    return {
+        name,
+        xCoord,
+        yCoord,
+        address,
+        phoneNumber,
+        email,
+        minPrice,
+        maxPrice,
+        hotelID: generateUniqueId({
+            length: 32,
+            useLetters: true,
+            useNumbers: true,
+        }),
+    };
+}
 
-const hotel1 = new HotelCredential(
+// Function to display hotel details
+function displayHotelDetails(hotel) {
+    return `
+        Hotel Name: ${hotel.name}
+        Hotel ID: ${hotel.hotelID}
+        Address: ${hotel.address}
+        Phone Number: ${hotel.phoneNumber}
+        Email: ${hotel.email}
+        Coordinates: (${hotel.xCoord}, ${hotel.yCoord})
+    `;
+}
+
+// Function to save hotel details to the database
+async function saveHotelDetails(hotel) {
+    try {
+        const newHotel = new Hotel({
+            name: hotel.name,
+            location: {
+                type: 'Point',
+                coordinates: [hotel.xCoord, hotel.yCoord],
+            },
+            minPrice: hotel.minPrice,
+            maxPrice: hotel.maxPrice,
+            hotelID: hotel.hotelID,
+            email: hotel.email,
+            phoneNumber: hotel.phoneNumber,
+            address: hotel.address,
+        });
+        await newHotel.save();
+        console.log("Hotel saved successfully");
+    } catch (error) {
+        console.error('Error adding hotel:', error);
+    }
+}
+
+// Example of using the functions
+const hotel1 = createHotel(
     "Hotel Summer Inn",
     78.2312,
     40.12312,
@@ -87,5 +90,7 @@ const hotel1 = new HotelCredential(
     "well_you_can_wait@gmail.com",
     5000,
     4000
-)
-hotel1.saveDetails();
+);
+
+console.log(displayHotelDetails(hotel1));
+saveHotelDetails(hotel1);
