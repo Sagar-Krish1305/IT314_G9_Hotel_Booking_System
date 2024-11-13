@@ -1,0 +1,1 @@
+// Hotel Register, Search and all hotel related controllers should be here!!
