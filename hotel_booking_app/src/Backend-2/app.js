@@ -14,8 +14,8 @@ app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(express.static("public"))
 app.use(cookieParser())
 
-import hotelRouter from './routes/hotel.route.js'
 
-app.use("/api/v1/hotels", hotelRouter)
+// Base router file should be updated here
+
 
 export { app }
