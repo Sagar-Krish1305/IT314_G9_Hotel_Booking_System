@@ -73,6 +73,6 @@ router.post("/search", handleSearchRequest);
 //     handleSearchRequest
 // )
 
-route.post("/confirm-booking", handleBookingRequest);
+//route.post("/confirm-booking", handleBookingRequest);
 
 export default router
