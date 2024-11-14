@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-
 const hotelPoliciesSchema = new Schema({
     checkInTime: {
         type: String,
@@ -91,12 +90,10 @@ const hotelDetailsSchema = new Schema({
         type: Number,
         required: true
     },
-
     ratings: [{
         type: Schema.Types.ObjectId,
         ref: "Rating"
     }],
-
     images: {
         type: [String],
         default: [],
