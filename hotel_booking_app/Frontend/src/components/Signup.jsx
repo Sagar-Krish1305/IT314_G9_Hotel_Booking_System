@@ -1,61 +1,59 @@
 import React, { useState } from 'react';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
-import { toast } from 'react-toastify'; // Include ToastContainer in your main component
-import './Signup.css';
+import { FaPhone } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import bcrypt from 'bcryptjs';
 
 export const Signup = () => {
   const [showCreatePass, setShowCreatePass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [emailExists, setEmailExists] = useState(false);
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
+    mobileNumber: "",
     password: "",
     confirmPassword: "",
+    userType: "customer", // Default to customer
   });
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regular expression for validating email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const mobileRegex = /^[0-9]{10}$/;
 
   function changeHandler(event) {
     const { name, value } = event.target;
-
-    // Validate email format as the user types
     if (name === "email") {
       setEmailError(!emailRegex.test(value));
     }
-
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   }
 
-  // Password Validation Function
   const validatePassword = (password) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return passwordRegex.test(password);
   };
 
-  // Handle form submission
   async function postdata_into_database(e) {
     e.preventDefault();
-
-    // Check if email format is valid
     if (emailError || !emailRegex.test(formData.email)) {
       toast.error("Invalid email format");
       return;
     }
-
-    // Check if password and confirm password match
+    if (!mobileRegex.test(formData.mobileNumber)) {
+      toast.error("Invalid mobile number format");
+      return;
+    }
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-
-    // Validate password strength
     if (!validatePassword(formData.password)) {
       toast.error(
         'Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long'
@@ -63,10 +61,11 @@ export const Signup = () => {
       return;
     }
 
-    // Send data to backend to check if email exists and create the account
-    const { firstName, lastName, email, password, confirmPassword } = formData;
+    const { firstName, lastName, email, mobileNumber, password, confirmPassword, userType } = formData;
 
     try {
+      // const hashedPassword = await bcrypt.hash(password, 10);
+
       const res = await fetch("/api/v1/createmessage", {
         method: "POST",
         headers: {
@@ -76,22 +75,26 @@ export const Signup = () => {
           first_name: firstName,
           last_name: lastName,
           e_mail: email,
-          password,
+          mobile_number: mobileNumber,
+          password: password,
           confirm_password: confirmPassword,
+          user_type: userType,
         }),
       });
 
       const data = await res.json();
-
       if (res.status === 200 && data.success) {
         toast.success("Account Created Successfully");
         setFormData({
           firstName: "",
           lastName: "",
           email: "",
+          mobileNumber: "",
           password: "",
           confirmPassword: "",
+          userType: "customer",
         });
+        navigate('/login');
       } else if (res.status === 400 && data.message === "User with this email already exists") {
         toast.error("User already exists with this email");
       } else if (res.status === 400 && data.message === "Password and confirm password do not match") {
@@ -99,21 +102,20 @@ export const Signup = () => {
       } else {
         toast.error("Something went wrong");
       }
-
     } catch (error) {
       toast.error("Error connecting to the server");
-      console.error("Error: ", error);
+      console.error("Error:", error);
     }
   }
 
   return (
     <>
-      <div className='heading'>Sign Up for the Register</div>
-      <div className="signup-container">
-        <form method="POST" onSubmit={postdata_into_database}>
-          <div className="form-group">
-            <label className="form-label">
-              👤 First Name <sup className="required">*</sup>
+      <div className='text-2xl font-bold flex justify-center items-center w-[435px] h-[50px] mt-[30px] mb-[10px] mx-auto border-3 border-black rounded-[10px]'>Sign Up for the Register</div>
+      <div className="w-full max-w-[400px] mx-auto p-5 bg-white shadow-md rounded-lg">
+        <form method="POST" onSubmit={postdata_into_database} className="space-y-4">
+          <div>
+            <label className="block text-base text-gray-700 mb-2">
+              First Name<sup className="text-red-500">*</sup>
             </label>
             <input
               type="text"
@@ -122,13 +124,12 @@ export const Signup = () => {
               onChange={changeHandler}
               value={formData.firstName}
               name="firstName"
-              className="form-input"
+              className="w-full h-10 px-3 py-2 text-sm border border-gray-300 rounded-md"
             />
           </div>
-
-          <div className="form-group">
-            <label className="form-label">
-            👤 Last Name <sup className="required">*</sup>
+          <div>
+            <label className="block text-base text-gray-700 mb-2">
+              Last Name<sup className="text-red-500">*</sup>
             </label>
             <input
               type="text"
@@ -137,13 +138,12 @@ export const Signup = () => {
               onChange={changeHandler}
               value={formData.lastName}
               name="lastName"
-              className="form-input"
+              className="w-full h-10 px-3 py-2 text-sm border border-gray-300 rounded-md"
             />
           </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              📧 Email Address <sup className="required">*</sup>
+          <div>
+            <label className="block text-base text-gray-700 mb-2">
+              Email Address<sup className="text-red-500">*</sup>
             </label>
             <input
               type="email"
@@ -152,15 +152,33 @@ export const Signup = () => {
               value={formData.email}
               onChange={changeHandler}
               name="email"
-              className={`form-input ${emailError ? "error" : ""}`}
+              className={`w-full h-10 px-3 py-2 text-sm border ${emailError ? 'border-red-500' : 'border-gray-300'} rounded-md`}
             />
-            {emailError && <span className="error-text"><sup className="required">*</sup>Email is not valid</span>}
-            {emailExists && <span className="error-text">User already exists with this email</span>}
+            {emailError && <span className="text-red-500 text-sm">Email is not valid</span>}
+            {emailExists && <span className="text-red-500 text-sm">User already exists with this email</span>}
           </div>
-
-          <div className="form-group password-group">
-            <label className="form-label">
-              🔐 Create Password <sup className="required">*</sup>
+          <div>
+            <label className="block text-base text-gray-700 mb-2">
+              Mobile Number<sup className="text-red-500">*</sup>
+            </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                <FaPhone className="text-gray-400" />
+              </span>
+              <input
+                type="tel"
+                required
+                placeholder="Enter Mobile Number"
+                onChange={changeHandler}
+                value={formData.mobileNumber}
+                name="mobileNumber"
+                className="w-full h-10 pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-md"
+              />
+            </div>
+          </div>
+          <div className="relative">
+            <label className="block text-base text-gray-700 mb-2">
+              Create Password<sup className="text-red-500">*</sup>
             </label>
             <input
               type={showCreatePass ? "text" : "password"}
@@ -169,23 +187,22 @@ export const Signup = () => {
               onChange={changeHandler}
               value={formData.password}
               name="password"
-              className="form-input"
+              className="w-full h-10 px-3 py-2 text-sm border border-gray-300 rounded-md"
             />
             <span
               onClick={() => setShowCreatePass(!showCreatePass)}
-              className="password-toggle"
+              className="absolute right-3 top-9 cursor-pointer"
             >
               {showCreatePass ? (
-                <AiOutlineEyeInvisible fontSize={24} fill="#AFB2BF" />
+                <AiOutlineEyeInvisible className="text-2xl text-gray-400" />
               ) : (
-                <AiOutlineEye fontSize={24} fill="#AFB2BF" />
+                <AiOutlineEye className="text-2xl text-gray-400" />
               )}
             </span>
           </div>
-
-          <div className="form-group password-group">
-            <label className="form-label">
-              🔐 Confirm Password <sup className="required">*</sup>
+          <div className="relative">
+            <label className="block text-base text-gray-700 mb-2">
+              Confirm Password<sup className="text-red-500">*</sup>
             </label>
             <input
               type={showConfirmPass ? "text" : "password"}
@@ -194,22 +211,45 @@ export const Signup = () => {
               onChange={changeHandler}
               value={formData.confirmPassword}
               name="confirmPassword"
-              className="form-input"
+              className="w-full h-10 px-3 py-2 text-sm border border-gray-300 rounded-md"
             />
             <span
               onClick={() => setShowConfirmPass(!showConfirmPass)}
-              className="password-toggle"
+              className="absolute right-3 top-9 cursor-pointer"
             >
               {showConfirmPass ? (
-                <AiOutlineEyeInvisible fontSize={24} fill="#AFB2BF" />
+                <AiOutlineEyeInvisible className="text-2xl text-gray-400" />
               ) : (
-                <AiOutlineEye fontSize={24} fill="#AFB2BF" />
+                <AiOutlineEye className="text-2xl text-gray-400" />
               )}
             </span>
           </div>
-
-          <button type="submit" className="submit-button">
-            Create Account
+          <div>
+            <label className="block text-base text-gray-700 mb-2">
+              Register as<sup className="text-red-500">*</sup>
+            </label>
+            <div className="flex justify-between">
+              {['admin', 'customer', 'manager'].map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, userType: type }))}
+                  className={`flex-1 py-2 px-4 text-sm rounded-md transition-colors duration-300 ${
+                    formData.userType === type
+                      ? 'bg-purple-700 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <button type="submit" className="w-full bg-purple-700 hover:bg-purple-800 text-white text-xl py-2 px-4 rounded-md transition-colors duration-300">
+            Register
+          </button>
+          <button type="button" className="w-full mt-2 bg-purple-700 hover:bg-purple-800 text-white text-xl py-2 px-4 rounded-md transition-colors duration-300">
+            <a href='/login' className="text-white no-underline">Login</a>
           </button>
         </form>
       </div>
