@@ -14,6 +14,7 @@ const { forgotPassword, resetPassword } = require("../controllers/passwordResetC
 const { googleSignIn } = require("../controllers/googleAuthController");
 const { updateProfile } = require("../controllers/updateProfile");
 const authMiddleware = require('../middleware/authMiddeleware');
+import { handleBookingRequest } from "../controllers/bookings.controller.js"
 
 
 router.post("/createmessage", newmessage);
@@ -27,29 +28,29 @@ router.put('/update-profile', authMiddleware, updateProfile);
 const JWT_SECRET = 'your-secret-key';
 
 router.get('/api/v1/verify-token', (req, res) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
+    const token = req.header('Authorization')?.replace('Bearer ', '');
 
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'No token provided' });
-  }
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'No token provided' });
+    }
 
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    
-    // Fetch user details if needed
-    // const user = await User.findById(decoded.userId);
-    
-    res.json({
-      success: true,
-      user: {
-        id: decoded.userId,
-        email: decoded.email,
-        // Add other non-sensitive user details as needed
-      }
-    });
-  } catch (error) {
-    res.status(401).json({ success: false, message: 'Invalid token' });
-  }
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+
+        // Fetch user details if needed
+        // const user = await User.findById(decoded.userId);
+
+        res.json({
+            success: true,
+            user: {
+                id: decoded.userId,
+                email: decoded.email,
+                // Add other non-sensitive user details as needed
+            }
+        });
+    } catch (error) {
+        res.status(401).json({ success: false, message: 'Invalid token' });
+    }
 });
 
 module.exports = router;
@@ -73,6 +74,6 @@ router.post("/search", handleSearchRequest);
 //     handleSearchRequest
 // )
 
-//route.post("/confirm-booking", handleBookingRequest);
+router.post("/confirm-booking", handleBookingRequest);
 
 export default router
