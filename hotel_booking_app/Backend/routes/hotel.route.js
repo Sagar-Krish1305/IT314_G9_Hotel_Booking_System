@@ -3,6 +3,7 @@
 // import { Router } from "express";
 import { handleSearchRequest, RegisterHotel } from "../controllers/hotels.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { handleAddRatings } from "../controllers/user.contoller.js";
 
 const express = require("express");
 const router = express.Router();
@@ -68,6 +69,16 @@ router.route("/hotelRegister").post(
     ]),
     RegisterHotel
 )
+router.route("/addRatings").post(
+    upload.fields([
+        {
+            name: "images",
+            maxCount: 5
+        }
+    ]),
+    handleAddRatings
+);
+
 
 router.post("/search", handleSearchRequest);
 // router.route("/search").post(
@@ -75,5 +86,4 @@ router.post("/search", handleSearchRequest);
 // )
 
 router.post("/confirm-booking", handleBookingRequest);
-
 export default router
