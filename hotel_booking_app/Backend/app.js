@@ -16,6 +16,8 @@ app.use(cookieParser())
 
 
 // Base router file should be updated here
+import hotelRouter from "./routes/hotel.route.js"
+app.use("/api/v1/hotels", hotelRouter)
 
 
 export { app }
