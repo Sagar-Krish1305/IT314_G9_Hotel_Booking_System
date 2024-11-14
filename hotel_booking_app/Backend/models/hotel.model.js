@@ -1,27 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-const ratingSchema = new Schema({
-    user: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true
-    },
-    star: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 5
-    },
-    review: {
-        type: String,
-        trim: true
-    },
-    images: [{
-            type: String
-        }]
-}, { _id: false }, 
-   {timestamps : true});
-
 
 const hotelPoliciesSchema = new Schema({
     checkInTime: {
@@ -114,7 +92,10 @@ const hotelDetailsSchema = new Schema({
         required: true
     },
 
-    ratings: [ratingSchema],
+    ratings: [{
+        type: Schema.Types.ObjectId,
+        ref: "Rating"
+    }],
 
     images: {
         type: [String],
@@ -125,7 +106,7 @@ const hotelDetailsSchema = new Schema({
     bookings: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Booking'
+            ref: "BookingDetails"
         }
     ],
 

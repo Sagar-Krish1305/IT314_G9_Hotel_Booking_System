@@ -89,7 +89,14 @@ const handleSearchRequest = asyncHandler(async(req,res)=>{
     }
 
     // Find hotels in the specified city
-    const hotelsInCity = await HotelDetails.find({ city });
+    const hotelsInCity = await HotelDetails.find({
+        $or: [
+            { city: new RegExp(city, "i") },
+            { country: new RegExp(city, "i") },
+            { name: new RegExp(city, "i") }
+        ]
+    });
+    
 
     const availableHotels = [];
 
