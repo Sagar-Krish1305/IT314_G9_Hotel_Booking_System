@@ -106,7 +106,7 @@ const hotelDetailsSchema = new Schema({
     bookings: [
         {
             type: Schema.Types.ObjectId,
-            ref: "BookingDetails"
+            ref: 'BookingDetails'
         }
     ],
 
