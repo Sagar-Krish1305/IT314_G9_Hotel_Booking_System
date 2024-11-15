@@ -51,6 +51,8 @@ web_modules/
 # Optional npm cache directory
 .npm
 
+.DS_Store
+*.pem
 # Optional eslint cache
 .eslintcache
 

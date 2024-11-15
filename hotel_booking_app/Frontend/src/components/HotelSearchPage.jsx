@@ -210,3 +210,115 @@ const HotelDetailPage = ({ hotel, onBack }) => {
   )
 }
 
+
+export default function HotelSearchPage() {
+  const [hotels, setHotels] = useState([])
+  const [selectedHotel, setSelectedHotel] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+
+  const handleSearch = async (searchParams) => {
+    setLoading(true)
+    setError(null)
+
+
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/hotels/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(searchParams),
+      })
+
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch search results')
+      }
+
+
+      const data = await response.json()
+      console.log("s-",data.data)
+      setHotels(data.data)
+    } catch (err) {
+      setError(err.message)
+      console.error("Error fetching hotels:", err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+
+  const handleHotelClick = (hotel) => {
+    setSelectedHotel(hotel)
+    window.history.pushState({}, '', `/hotel/${hotel._id}`)
+  }
+
+
+  const handleBackToSearch = () => {
+    setSelectedHotel(null)
+    window.history.pushState({}, '', '/')
+  }
+
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-4">
+      {selectedHotel ? (
+        <HotelDetailPage hotel={selectedHotel} onBack={handleBackToSearch} />
+      ) : (
+        <>
+          <Header />
+          <div className="container mx-auto pt-20">
+            <h1 className="text-3xl font-bold mb-6">Find Your Perfect Stay</h1>
+            <SearchBar onSearch={handleSearch} />
+            {loading && <div className="text-center">Loading...</div>}
+            {error && <div className="text-center text-red-500">{error}</div>}
+            {!loading && !error && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {hotels.map((hotel) => (
+                  <HotelCard key={hotel._id} hotel={hotel} onClick={handleHotelClick} />
+                ))}
+              </div>
+            )}
+            {hotels.length > 0 && (
+              <div className="flex justify-center mt-8">
+                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">
+                  Load More
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+
+const HotelCard = ({ hotel, onClick }) => (
+  <div
+    className="bg-white p-3 rounded shadow-lg hover:shadow-xl transition-shadow duration-200 transform hover:scale-105 cursor-pointer"
+    onClick={() => onClick(hotel)}
+  >
+    <img
+      src={hotel.images[0]}
+      alt={hotel.hotelName}
+      className="w-full h-32 object-cover rounded mb-3"
+    />
+    <p className="text-gray-500 text-xs mb-1">{hotel.address}</p>
+    <h3 className="font-semibold text-base mb-1">{hotel.hotelName}</h3>
+    <p className="text-gray-600 text-xs mb-1">${hotel.pricePerNight}/Night</p>
+    <div className="flex items-center text-xs">
+      <span className="text-yellow-500 mr-1">
+        {"★".repeat(4)}
+        {"☆".repeat(1)}
+      </span>
+      <span className="text-gray-500">{hotel.ratings} Hi, shyam!</span>
+    </div>
+  </div>
+)
+
+
+
+
