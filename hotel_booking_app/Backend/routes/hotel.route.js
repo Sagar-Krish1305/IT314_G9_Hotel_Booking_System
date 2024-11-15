@@ -5,16 +5,18 @@ import { handleSearchRequest, RegisterHotel } from "../controllers/hotels.contro
 import { upload } from "../middlewares/multer.middleware.js";
 import { handleAddRatings } from "../controllers/user.contoller.js";
 
-const express = require("express");
-const router = express.Router();
-const jwt = require('jsonwebtoken');
+import express from 'express';
+import jwt from 'jsonwebtoken';
 
-const { newmessage } = require("../controllers/messagehandle");
-const { login } = require("../controllers/loginhandle");
-const { forgotPassword, resetPassword } = require("../controllers/passwordResetController");
-const { googleSignIn } = require("../controllers/googleAuthController");
-const { updateProfile } = require("../controllers/updateProfile");
-const authMiddleware = require('../middleware/authMiddeleware');
+import { newmessage } from '../controllers/registerhandle.js';
+import { login } from '../controllers/loginhandle.js';
+import { forgotPassword, resetPassword } from '../controllers/passwordResetController.js';
+import { googleSignIn } from '../controllers/googleAuthController.js';
+import { updateProfile } from '../controllers/updateProfile.js';
+import  authMiddleware  from '../middlewares/authMiddleware.js';
+
+const router = express.Router();
+
 import { handleBookingRequest } from "../controllers/bookings.controller.js"
 
 
@@ -54,9 +56,9 @@ router.get('/api/v1/verify-token', (req, res) => {
     }
 });
 
-module.exports = router;
+// module.exports = router;
 
-module.exports = router;
+// module.exports = router;
 
 // const router = Router()
 
