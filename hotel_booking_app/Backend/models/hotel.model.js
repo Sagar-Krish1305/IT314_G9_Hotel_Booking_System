@@ -70,11 +70,12 @@ const hotelDetailsSchema = new Schema({
         trim: true
     },
 
-    // type: {
-    //     type: String,
-    //     enum: ['luxury', '4star', 'normal'],
-    //     required: true
-    // },
+    type: {
+        type: [ String ],
+        //enum: ['luxury', '4star', 'normal'],
+        default: []
+    },
+    
 
     roomCount: {
         type: Number,
@@ -122,7 +123,7 @@ const hotelDetailsSchema = new Schema({
 
     password: {
         type: String,
-        required: [true, 'Password is required']
+        //required: [true, 'Password is required']
     }
 }, {
     timestamps: true
