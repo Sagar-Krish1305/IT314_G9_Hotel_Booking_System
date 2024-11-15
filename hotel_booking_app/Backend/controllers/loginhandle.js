@@ -1,14 +1,14 @@
-const jwt = require('jsonwebtoken');
-const message = require("../modules/message");
-const bcryptjs = require('bcryptjs');
+import jwt from 'jsonwebtoken';
+import { User } from '../models/user.model.js'; 
+import bcryptjs from 'bcryptjs';
 
 const JWT_SECRET = 'your-secret-key'; // Replace with a secure secret key
 
-exports.login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await message.findOne({ e_mail: email });
+    const user = await User.findOne({ e_mail: email });
 
     if (!user) {
       return res.status(400).json({
@@ -53,3 +53,5 @@ exports.login = async (req, res) => {
     });
   }
 };
+
+export { login }

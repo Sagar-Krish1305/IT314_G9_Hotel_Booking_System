@@ -1,12 +1,12 @@
-const message = require("../modules/message");
+import {User} from '../models/user.model.js'; 
 
-exports.updateProfile = async (req, res) => {
+const updateProfile = async (req, res) => {
   try {
     const { firstName, lastName, email, mobileNumber } = req.body;
     const userId = req.user.userId; // Assuming you have middleware to extract user ID from token
 
     // Find the user and update their profile
-    const updatedUser = await message.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
         first_name: firstName,
@@ -38,3 +38,5 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export {updateProfile}
