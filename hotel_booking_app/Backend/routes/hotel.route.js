@@ -83,5 +83,6 @@ router.post("/search", handleSearchRequest);
 
 router.post("/:hotelId/confirm-booking", handleBookingRequest);
 router.delete("/:bookingId", handlBookingcancellation);
+router.get("/:hotelId/rating-and-reviews", handleGetReviewRequest);
 
 export default router
