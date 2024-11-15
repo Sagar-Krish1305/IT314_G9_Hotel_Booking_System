@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const bcrypt = require('bcryptjs');
+import mongoose, { Schema } from 'mongoose';
+import bcrypt from "bcrypt"
 
 const messageapp = new mongoose.Schema(
   {
@@ -86,4 +86,4 @@ messageapp.pre('save', async function(next) {
   
   
 
-module.exports = mongoose.model("User", messageapp);
+export const User = mongoose.model("User", messageapp);

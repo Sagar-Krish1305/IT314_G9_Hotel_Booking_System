@@ -1,12 +1,13 @@
 // controllers/googleAuthController.js
-const { OAuth2Client } = require('google-auth-library');
-const message = require("../modules/message");
-const jwt = require('jsonwebtoken');
+import { OAuth2Client } from 'google-auth-library';
+
+import { User } from '../models/user.model.js'; 
+import jwt from 'jsonwebtoken';
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const JWT_SECRET = process.env.JWT_SECRET; // Make sure this is set in your environment variables
 
-exports.googleSignIn = async (req, res) => {
+const googleSignIn = async (req, res) => {
   const { token } = req.body;
   try {
     const ticket = await client.verifyIdToken({
@@ -17,7 +18,7 @@ exports.googleSignIn = async (req, res) => {
     const { email } = payload;
 
     // Check if the user exists in the database
-    const user = await message.findOne({ e_mail: email });
+    const user = await User.findOne({ e_mail: email });
 
     if (!user) {
       // If the user doesn't exist, return an error
@@ -55,3 +56,5 @@ exports.googleSignIn = async (req, res) => {
     });
   }
 };
+
+export { googleSignIn }

@@ -1,11 +1,11 @@
-const message = require("../modules/message");
+import { User } from '../models/user.model.js'; 
 
-exports.newmessage = async (req, res) => {
+const newmessage = async (req, res) => {
     try {
       const { first_name, last_name, e_mail, mobile_number, password, confirm_password, user_type } = req.body;
   
       // Check if the email already exists
-      const existingUser = await message.findOne({ e_mail });
+      const existingUser = await User.findOne({ e_mail });
       if (existingUser) {
         return res.status(400).json({
           success: false,
@@ -22,7 +22,7 @@ exports.newmessage = async (req, res) => {
       }
   
       // If no user exists, proceed to create a new entry
-      const createmessage = await message.create({
+      const createmessage = await User.create({
         first_name,
         last_name,
         e_mail,
@@ -46,3 +46,5 @@ exports.newmessage = async (req, res) => {
       });
     }
   };
+
+export {newmessage}

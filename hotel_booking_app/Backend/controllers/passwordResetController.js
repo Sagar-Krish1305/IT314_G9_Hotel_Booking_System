@@ -1,8 +1,8 @@
 // const crypto = require('crypto');
-const nodemailer = require('nodemailer');
-const message = require("../modules/message");
-const jwt = require('jsonwebtoken');
-const bcryptjs = require('bcryptjs');
+import nodemailer from 'nodemailer';
+import { User } from '../models/user.model.js'; 
+import jwt from 'jsonwebtoken';
+import bcryptjs from 'bcryptjs';
 
 const JWT_SECRET = 'your-secret-key'; // Use the same secret as in login
 
@@ -14,10 +14,10 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-exports.forgotPassword = async (req, res) => {
+const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await message.findOne({ e_mail: email });
+    const user = await User.findOne({ e_mail: email });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -50,7 +50,7 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-exports.resetPassword = async (req, res) => {
+const resetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
 
@@ -73,6 +73,8 @@ exports.resetPassword = async (req, res) => {
     if (error.name === 'JsonWebTokenError') {
       return res.status(400).json({ message: 'Invalid or expired reset token' });
     }
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ User: 'Server error' });
   }
 };
+
+export {forgotPassword, resetPassword}
