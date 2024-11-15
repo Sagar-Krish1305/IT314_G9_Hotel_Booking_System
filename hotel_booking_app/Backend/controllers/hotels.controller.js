@@ -20,7 +20,7 @@ const RegisterHotel = asyncHandler(async(req, res)=>{
     // return response
 
     const {hotelName, city, country, address, description,
-           roomCount, pricePerNight, contactNo, email, password} = req.body
+           roomCount, pricePerNight, contactNo, email, type, facilities, password} = req.body
     
     if(
         [hotelName, city, country, address, description,
@@ -50,6 +50,8 @@ const RegisterHotel = asyncHandler(async(req, res)=>{
         address, 
         description,
         roomCount, 
+        type,
+        facilities,
         pricePerNight, 
         contactNo, 
         email,
@@ -84,8 +86,8 @@ const handleSearchRequest = asyncHandler(async(req,res)=>{
     // console.log("123");
     // console.log(req.body);
     // console.log(city, checkInDate, checkOutDate, requiredRooms);
-    if(!(city && checkInDate && checkOutDate && requiredRooms)){
-        throw new ApiError(400, "all fields are required")
+    if(!(city)){
+        throw new ApiError(400, "city/country/hotel name is required")
     }
 
     // Find hotels in the specified city
@@ -97,38 +99,53 @@ const handleSearchRequest = asyncHandler(async(req,res)=>{
         ]
     });
     
+    if((checkInDate && !checkOutDate) || (checkOutDate && !checkInDate)){
+        throw new ApiError(400, "Both CheckInDate and checkOutDate is required")
+    }
 
     const availableHotels = [];
+    if(checkInDate && checkOutDate){
+        // Iterate over each hotel and check room availability
+        for (const hotel of hotelsInCity) {
+            const bookedRooms = await BookingDetails.aggregate([
+                {
+                    $match: {
+                        hotelId: hotel._id,
 
-    // Iterate over each hotel and check room availability
-    for (const hotel of hotelsInCity) {
-        const bookedRooms = await BookingDetails.aggregate([
-            {
-                $match: {
-                    hotelId: hotel._id,
+                        $and: [
+                            { checkIn: { $lte: new Date(checkOutDate) } },
+                            { checkOut: { $gte: new Date(checkInDate) } }
+                        ]
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$hotelId",
+                        totalRoomsBooked: { $sum: "$roomCount" }
+                    }
+                }
+            ]);
 
-                    $and: [
-                        { checkIn: { $lte: new Date(checkOutDate) } },
-                        { checkOut: { $gte: new Date(checkInDate) } }
-                    ]
-                }
-            },
-            {
-                $group: {
-                    _id: "$hotelId",
-                    totalRoomsBooked: { $sum: "$roomCount" }
-                }
+            const totalRoomsBooked = bookedRooms.length > 0 ? bookedRooms[0].totalRoomsBooked : 0;
+            const availableRooms = hotel.roomCount - totalRoomsBooked;
+
+            // Check if the available rooms meet the required number of rooms
+            if (availableRooms >= requiredRooms) {
+                const {address, description, type, roomCount, facilities, contactNo,email,password, ...hotelData } = hotel.toObject();
+                availableHotels.push({...hotelData, availableRooms});
             }
-        ]);
-
-        const totalRoomsBooked = bookedRooms.length > 0 ? bookedRooms[0].totalRoomsBooked : 0;
-        const availableRooms = hotel.roomCount - totalRoomsBooked;
-
-        // Check if the available rooms meet the required number of rooms
-        if (availableRooms >= requiredRooms) {
-            const { roomCount, password, ...hotelData } = hotel.toObject();
-            availableHotels.push({...hotelData, availableRooms});
         }
+
+        return res
+        .status(200)
+        .json(
+            new ApiResponse(200, availableHotels, "All hotels with required search condition is returned")
+        )
+    }
+    
+    for (const hotel of hotelsInCity){
+        const {address, description, type, roomCount, facilities, contactNo,email,password, ...hotelData } = hotel.toObject();
+        availableHotels.push({hotelData});
     }
 
     return res
@@ -136,12 +153,28 @@ const handleSearchRequest = asyncHandler(async(req,res)=>{
     .json(
         new ApiResponse(200, availableHotels, "All hotels with required search condition is returned")
     )
+    
+})
 
+
+const getDetailsOfHotel = asyncHandler(async(req,res)=>{
+
+    const hotelID = req.params.hotelId;
+    const hotel = await HotelDetails.findById(hotelID).select("-password");
+
+    if(!hotel){
+        throw new ApiError(400, "Doesn't find hotel with this hotelID");
+    }
+
+    return res
+    .status(200)
+    .json(200, hotel, "Hotel Details return successfully");
 })
 
 
 
 export {
     RegisterHotel,
-    handleSearchRequest
+    handleSearchRequest,
+    getDetailsOfHotel
 }

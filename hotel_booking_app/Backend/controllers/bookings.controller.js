@@ -77,6 +77,65 @@ const handleBookingRequest = asyncHandler(async (req, res) => {
     )
 });
 
+
+// Check booking credential before going to booking confirm page
+const checkBookingCredential = asyncHandler(async(req,res)=>{
+    const {checkInDate, checkOutDate, requiredRooms} = req.body
+
+    if([checkInDate, checkOutDate, requiredRooms].some((field)=>field?.trim === "")){
+        throw new ApiError(400, "Check-In-Date, Check-Out-Date and Number of Rooms must be provided")
+    }
+
+    const hotelID = req.params.hotelId;
+
+    const hotel = await HotelDetails.findById(hotelID);
+
+    if(!hotel){
+        throw new ApiError(400, "Hotel doesn't found with this hotel ID");
+    }
+
+    const bookedRooms = await BookingDetails.aggregate([
+        {
+            $match: {
+                hotelId: hotel._id,
+
+                $and: [
+                    { checkIn: { $lte: new Date(checkOutDate) } },
+                    { checkOut: { $gte: new Date(checkInDate) } }
+                ]
+            }
+        },
+        {
+            $group: {
+                _id: "$hotelId",
+                totalRoomsBooked: { $sum: "$roomCount" }
+            }
+        }
+    ]);
+
+    const totalRoomsBooked = bookedRooms.length > 0 ? bookedRooms[0].totalRoomsBooked : 0;
+    const availableRooms = hotel.roomCount - totalRoomsBooked;
+
+    // Check if the available rooms meet the required number of rooms
+    if (availableRooms >= requiredRooms) {
+        res
+        .status(200)
+        .json(
+            new ApiResponse(400, hotel, "Rooms are available for booking during this time")
+        )
+    }
+    else{
+        res
+        .status(200)
+        .json(
+            new ApiResponse(400,hotel, "Not enough rooms to book during this time")
+        )
+    }
+});
+
+
+
 export {
-    handleBookingRequest
+    handleBookingRequest,
+    checkBookingCredential
 }

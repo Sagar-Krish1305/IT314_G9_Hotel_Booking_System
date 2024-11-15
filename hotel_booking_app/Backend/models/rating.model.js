@@ -50,7 +50,7 @@ const ratingSchema = new Schema({
         type: [String],
         defaule: []
     }
-}, { _id: false }, 
-   {timestamps : true});
+}, 
+    {timestamps : true});
 
 export const Rating = mongoose.model("Rating", ratingSchema);
