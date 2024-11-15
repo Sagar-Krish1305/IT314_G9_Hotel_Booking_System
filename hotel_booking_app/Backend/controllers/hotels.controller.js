@@ -6,7 +6,8 @@ import mongoose from "mongoose";
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import { HotelDetails } from "../models/hotel.model.js";
 import { BookingDetails } from "../models/booking.model.js";
-import { Rating } from "../models/booking.model.js";
+import { validationResult } from "express-validator";
+import { Rating } from "../models/rating.model.js";
 
 
 const RegisterHotel = asyncHandler(async (req, res) => {
@@ -19,6 +20,12 @@ const RegisterHotel = asyncHandler(async (req, res) => {
     // remove password field from response
     // check for hotel creation
     // return response
+
+    /// Handle validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json(new ApiResponse(400,{ errors: errors.array() },"Validation Error"));
+    }
 
     const { hotelName, city, country, address, description,
         roomCount, pricePerNight, contactNo, email, type, facilities, password } = req.body
@@ -82,6 +89,12 @@ const handleSearchRequest = asyncHandler(async (req, res) => {
     //    --> retrive hotels which are in the city
     //    --> for each hotel look in bookingDetails and retrive no of booking of that hotel during booking period 
     //    --> store all hotels for which available room is more than required rooms
+
+    // Handle validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json(new ApiResponse(400,{ errors: errors.array() },"Validation Error"));
+    }
 
     const { city, checkInDate, checkOutDate, requiredRooms } = req.body
     // console.log("123");

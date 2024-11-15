@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer';
 import { User } from '../models/user.model.js'; 
 import jwt from 'jsonwebtoken';
 import bcryptjs from 'bcryptjs';
-
+import { validationResult } from 'express-validator';
 const JWT_SECRET = 'your-secret-key'; // Use the same secret as in login
 
 const transporter = nodemailer.createTransport({
@@ -15,6 +15,13 @@ const transporter = nodemailer.createTransport({
 });
 
 const forgotPassword = async (req, res) => {
+  
+  // Handle validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json(new ApiResponse(400,{ errors: errors.array() },"Validation Error"));
+  }
+
   try {
     const { email } = req.body;
     const user = await User.findOne({ e_mail: email });
@@ -51,6 +58,13 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
+ 
+  // Handle validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json(new ApiResponse(400,{ errors: errors.array() },"Validation Error"));
+  }
+
   try {
     const { token, newPassword } = req.body;
 
