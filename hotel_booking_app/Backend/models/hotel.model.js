@@ -70,11 +70,11 @@ const hotelDetailsSchema = new Schema({
     },
 
     type: {
-        type: [ String ],
+        type: [String],
         //enum: ['luxury', '4star', 'normal'],
         default: []
     },
-    
+
 
     roomCount: {
         type: Number,

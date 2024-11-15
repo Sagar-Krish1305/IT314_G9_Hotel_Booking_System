@@ -1,7 +1,7 @@
 // All routers code should be update here
 
 // import { Router } from "express";
-import { getDetailsOfHotel, handleSearchRequest, RegisterHotel } from "../controllers/hotels.controller.js";
+import { getDetailsOfHotel, handleSearchRequest, RegisterHotel, handleGetReviewRequest } from "../controllers/hotels.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { handleAddRatings } from "../controllers/user.controller.js";
 
@@ -83,5 +83,6 @@ router.post("/search", handleSearchRequest);
 
 router.post("/:hotelId/confirm-booking", handleBookingRequest);
 router.delete("/:bookingId", handlBookingcancellation);
+router.get("/:hotelId/rating-and-reviews", handleGetReviewRequest);
 
 export default router
