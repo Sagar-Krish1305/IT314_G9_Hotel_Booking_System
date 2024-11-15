@@ -46,7 +46,6 @@ const hotelDetailsSchema = new Schema({
         trim: true,
         index: true
     },
-
     city: {
         type: String,
         required: true,
@@ -100,14 +99,12 @@ const hotelDetailsSchema = new Schema({
         default: [],
         // required: true
     },
-
     bookings: [
         {
             type: Schema.Types.ObjectId,
             ref: 'BookingDetails'
         }
     ],
-
     contactNo: {
         type: String,
         required: true

@@ -38,11 +38,11 @@ const bookingSchema = new Schema({
         required: true,
         min: 1
     },
-    checkIn: {
+    checkInDate: {
         type: Date,
         required: true
     },
-    checkOut: {
+    checkOutDate: {
         type: Date,
         required: true
     },
