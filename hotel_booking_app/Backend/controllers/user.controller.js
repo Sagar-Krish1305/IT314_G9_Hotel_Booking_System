@@ -8,9 +8,17 @@ import { Rating } from "../models/rating.model.js";
 import { User } from "../models/user.model.js";
 import { BookingDetails } from "../models/booking.model.js";
 import { HotelDetails } from "../models/hotel.model.js";
+import { validationResult } from "express-validator";
 
 
 const handleAddRatings = asyncHandler(async (req, res) => {
+    
+    // Handle validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json(new ApiResponse(400,{ errors: errors.array() },"Validation Error"));
+    }
+
     const {
         overallRating,
         reviewTitle,

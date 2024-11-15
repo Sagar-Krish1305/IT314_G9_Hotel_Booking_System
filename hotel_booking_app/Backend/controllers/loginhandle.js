@@ -1,10 +1,19 @@
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model.js'; 
 import bcryptjs from 'bcryptjs';
+import { validationResult } from 'express-validator';
+import { ApiResponse } from '../utils/ApiResponse.js';
 
 const JWT_SECRET = 'your-secret-key'; // Replace with a secure secret key
 
 const login = async (req, res) => {
+
+  // Handle validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json(new ApiResponse(400,{ errors: errors.array() },"Validation Error"));
+  }
+
   try {
     const { email, password } = req.body;
 
