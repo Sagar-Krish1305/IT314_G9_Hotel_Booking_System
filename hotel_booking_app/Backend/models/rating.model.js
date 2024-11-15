@@ -1,6 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
 const ratingSchema = new Schema({
+    hotelId: {
+        type: Schema.Types.ObjectId,
+        ref: "HotelDetails",
+        required: true
+    },
     userId: {
         type: Schema.Types.ObjectId,
         ref: "User",

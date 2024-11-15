@@ -134,8 +134,51 @@ const checkBookingCredential = asyncHandler(async(req,res)=>{
 });
 
 
+//Booking Cancellation
+const handlBookingcancellation = asyncHandler(async (req, res) => {
+    const { bookingId } = req.params;
+    try {
+        const booking = await BookingDetails.findById(bookingId);
+        
+        //check booking is exist or not
+        if (!booking) {
+            throw new ApiError(404, "Booking Not Found!"); 
+        }
+
+        const currentDate = new Date();
+        const checkInDate = new Date(booking.checkInDate);
+
+        // if currentDate exceeds checkInDate than user cann't cancel rooms
+        if (currentDate > checkInDate) {   
+            throw new ApiError(400, "Cannot cancel after Check In");
+        }
+
+        // check if hotel exists
+        const hotel = await HotelDetails.findById(booking.hotelId);
+        if (!hotel) {
+            throw new ApiError(404,"Associated hotel not found");
+        }
+        
+        //Update availabeRooms in hotel dataBase
+        hotel.availableRooms += booking.roomCount;
+
+        await hotel.save();
+
+        //delete booking 
+        await BookingDetails.findByIdAndDelete(bookingId);
+        
+        res.status(200).json(
+            new ApiResponse(200, null, "Booking successfully canceled and rooms updated")
+        );
+
+    } catch (error) {
+        throw new ApiError(500,error.message || 'Internal Server Error');
+    }
+
+});
 
 export {
     handleBookingRequest,
-    checkBookingCredential
+    checkBookingCredential,
+    handlBookingcancellation
 }
