@@ -290,10 +290,60 @@ const getNearestHotels = async (req, res) => {
 };
 
 
+// getting current location of user for filtering data
+const getCurrentLocation = (pos) => {
+    let userLocation = {}
+    navigator.geolocation.getCurrentPosition((pos) => {
+        var crd = pos.coords;
+  
+        console.log("Your current position is:");
+        console.log(`Latitude : ${crd.latitude}`);
+        console.log(`Longitude: ${crd.longitude}`);
+        console.log(`More or less ${crd.accuracy} meters.`);
+  
+        userLocation = {
+            latitude: crd.latitude,
+            longitude: crd.longitude
+        }
+    });
+  
+    return userLocation
+  }
+  
+  const getUserLocation = () => {
+    const userLocation = {}
+    if (navigator.geolocation) {
+        navigator.permissions
+          .query({ name: "geolocation" })
+          .then(function (result) {
+            if (result.state === "granted") {
+              console.log(result.state);
+              return getCurrentLocation();
+            } else if (result.state === "prompt") {
+              console.log(result.state);
+              return getCurrentLocation();
+            } else if (result.state === "denied") {
+              //If denied then you have to show instructions to enable location
+              alert("Please Allow You Location!");
+            }
+            result.onchange = function () {
+              console.log(result.state);
+            };
+          });
+  
+      } else {
+        alert("Sorry Not available!");
+      }
+  
+      return userLocation
+  }
+
+
 export {
     RegisterHotel,
     handleSearchRequest,
     getDetailsOfHotel,
     handleGetReviewRequest,
-    getNearestHotels
+    getNearestHotels,
+    getUserLocation
 }
