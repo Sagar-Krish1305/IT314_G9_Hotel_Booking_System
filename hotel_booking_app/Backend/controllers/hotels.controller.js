@@ -255,9 +255,57 @@ const handleGetReviewRequest = asyncHandler(async (req, res) => {
 
 });
 
+const getNearestHotels = async (req, res) => {
+    try {
+        const { latitude, longitude, maxDistance } = req.query;
+        
+        // Validation for required query parameters
+        if (!latitude || !longitude || !maxDistance) {
+            throw new ApiError(400, "Latitude, Longitude, and Max Distance are required");
+        }
+
+        // Validate if latitude and longitude are numbers
+        if (isNaN(latitude) || isNaN(longitude)) {
+            throw new ApiError(400, "Latitude and Longitude should be valid numbers");
+        }
+
+        // Convert maxDistance to a number (assumed in meters)
+        const maxDistInMeters = parseInt(maxDistance);
+
+        // Find hotels within the max distance from the given coordinates
+        const hotels = await HotelDetails.find({
+            location: {
+                $near: {
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [parseFloat(longitude), parseFloat(latitude)],
+                    },
+                    $maxDistance: maxDistInMeters,
+                },
+            },
+        });
+
+        if (hotels.length === 0) {
+            return res
+                .status(200)
+                .json(new ApiResponse(200, [], "No hotels found within the specified distance"));
+        }
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, hotels, "Hotels within the specified distance returned successfully"));
+    } catch (error) {
+        return res
+            .status(error.statusCode || 500)
+            .json(new ApiResponse(error.statusCode || 500, null, error.message));
+    }
+};
+
+
 export {
     RegisterHotel,
     handleSearchRequest,
     getDetailsOfHotel,
-    handleGetReviewRequest
+    handleGetReviewRequest,
+    getNearestHotels
 }
