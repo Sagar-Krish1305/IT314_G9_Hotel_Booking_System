@@ -1,28 +1,41 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from './UserContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Cookies from 'js-cookie';
 
 export default function UserLogo() {
   const { user, setUser } = useContext(UserContext);
   const [isOpen, setIsOpen] = useState(false);
+  const [initials, setInitials] = useState('?');
   const navigate = useNavigate();
 
-  if (!user) return null;
+  // If `user` is null or undefined, don't render the component.
+  
 
-  const initials = `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
+  useEffect(() => {
+
+    console.log("my",user);
+
+    if (!user) return null;
+
+    setInitials(`${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`.toUpperCase() || '?');
+    
+  }, [user])
+  
 
   const handleLogout = () => {
     setUser(null);
-    localStorage.removeItem('token');
+    // localStorage.removeItem('token');
+    Cookies.remove('token');
     toast.success("User Logout successfully");
-    navigate('/');
+    navigate('/home');
   };
 
   return (
     <div className="relative">
       <div 
-        className="w-10 h-10 rounded-full bg-purple-700 text-white flex justify-center items-center font-bold cursor-pointer"
+        className="w-10 h-10 rounded-full bg-blue-700 text-white flex justify-center items-center font-bold cursor-pointer"
         onClick={() => setIsOpen(!isOpen)}
       >
         {initials}
