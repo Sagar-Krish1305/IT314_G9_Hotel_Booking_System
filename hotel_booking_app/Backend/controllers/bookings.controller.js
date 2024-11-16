@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { HotelDetails } from "../models/hotel.model.js";
 import { BookingDetails } from "../models/booking.model.js";
+import { User } from "../models/user.model.js";
 
 const handleBookingRequest = asyncHandler(async (req, res) => {
     // data from body
@@ -15,14 +16,16 @@ const handleBookingRequest = asyncHandler(async (req, res) => {
     // check for hotel creation
     // return response
 
-    const { hotelId, firstName, lastName, email, checkInDate, checkOutDate, phone, roomCount, totalCost } = req.body;
-
-    // const userId = req.user?._id;
-    const userId = Math.random().toString(36).substring(2, 12);
+    const { firstName, lastName, email, checkInDate, checkOutDate, phone, roomCount, totalCost } = req.body;
+    
+    // console.log(req.body);
+    const userId = req.user?._id;
+    const hotelId = req.params.hotelId;
+    // const userId = Math.random().toString(36).substring(2, 12);
     // console.log(userId);
-
+    
     if (
-        [hotelId, firstName, lastName, email, checkInDate, checkOutDate, phone, roomCount, totalCost].some((field) => field?.trim === "")
+        [hotelId, firstName, lastName, email, checkInDate, checkOutDate, phone, roomCount, totalCost].some((field) => field?.trim() === "")
     ) {
         throw new ApiError(400, "All mandatory field is required");
     }
@@ -65,7 +68,6 @@ const handleBookingRequest = asyncHandler(async (req, res) => {
     await hotel.save({ validateBeforeSave: false });
 
     // Enter the booking into the user as well.
-
     await User.findByIdAndUpdate(
         userId,
         { $push: { bookingHistory: createdBooking._id } },
@@ -82,7 +84,7 @@ const handleBookingRequest = asyncHandler(async (req, res) => {
 const checkBookingCredential = asyncHandler(async(req,res)=>{
     const {checkInDate, checkOutDate, requiredRooms} = req.body
 
-    if([checkInDate, checkOutDate, requiredRooms].some((field)=>field?.trim === "")){
+    if([checkInDate, checkOutDate, requiredRooms].some((field)=>field?.trim() === "")){
         throw new ApiError(400, "Check-In-Date, Check-Out-Date and Number of Rooms must be provided")
     }
 
@@ -164,6 +166,17 @@ const handlBookingcancellation = asyncHandler(async (req, res) => {
 
         await hotel.save();
 
+        //Remove booking from hotel dataBase
+        hotel.bookings = hotel.bookings.filter((id) => id.toString() !== bookingId);
+        await hotel.save();
+
+        const user = await User.findById(booking.userId);
+        if (user) {
+            //Remove booking from the user's booking history
+            user.bookingHistory = user.bookingHistory.filter((id) => id.toString() !== bookingId);
+            await user.save();
+        }
+        
         //delete booking 
         await BookingDetails.findByIdAndDelete(bookingId);
         
