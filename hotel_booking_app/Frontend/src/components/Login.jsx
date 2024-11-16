@@ -3,7 +3,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import immm from "./s.png"
 
-export default function Component() {
+export function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [emailError, setEmailError] = useState(false)
   const [formData, setFormData] = useState({

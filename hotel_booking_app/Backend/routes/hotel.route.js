@@ -134,9 +134,11 @@ router.post("/search",[
     body("city")
         .notEmpty()
         .withMessage("City is required."),
+    
     body("checkInDate")
         .notEmpty()
         .withMessage("Check-in date is required."),
+    
     body("checkOutDate")
         .notEmpty()
         .withMessage("Check-out date is required.")
@@ -154,7 +156,23 @@ router.post("/search",[
 //     handleSearchRequest
 // )
 
-router.post("/:hotelId/confirm-booking", handleBookingRequest);
+router.post("/:hotelId/confirm-booking", [
+    
+    //Validator Rules
+    body("email")
+        .notEmpty()
+        .withMessage("Email is required.")
+        .isEmail()
+        .withMessage("A valid email is required."),  
+    
+    body("phone")
+        .notEmpty()
+        .withMessage("Phone number is required.")
+        .matches(/^\d{10}$/)
+        .withMessage("Phone number must be a valid 10-digit number."),
+
+], handleBookingRequest);
+
 router.delete("/:bookingId", handlBookingcancellation);
 router.get("/:hotelId/rating-and-reviews", handleGetReviewRequest);
 

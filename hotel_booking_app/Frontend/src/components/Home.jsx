@@ -135,7 +135,8 @@ const HotelCard = ({ hotel, isFavorite, onToggleFavorite }) => {
     </div>
   )
 }
-export default function Home() {
+
+export function Home() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [favoriteHotels, setFavoriteHotels] = useState([])

@@ -32,7 +32,7 @@ const RegisterHotel = asyncHandler(async (req, res) => {
 
     if (
         [hotelName, city, country, address, description,
-            roomCount, pricePerNight, contactNo, email, password].some((field) => field?.trim === "")
+            roomCount, pricePerNight, contactNo, email, password].some((field) => field?.trim() === "")
     ) {
         throw new ApiError(400, "All mandatory field is required")
     }
@@ -90,7 +90,7 @@ const handleSearchRequest = asyncHandler(async (req, res) => {
     //    --> for each hotel look in bookingDetails and retrive no of booking of that hotel during booking period 
     //    --> store all hotels for which available room is more than required rooms
 
-    // Handle validation errors
+    // Handle validation errors    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json(new ApiResponse(400,{ errors: errors.array() },"Validation Error"));
@@ -117,49 +117,37 @@ const handleSearchRequest = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Both CheckInDate and checkOutDate is required")
     }
 
+    // console.log("hotels in City", hotelsInCity);
+    
     let availableHotels = [];
-    if (checkInDate && checkOutDate) {
-        // Iterate over each hotel and check room availability
-        for (const hotel of hotelsInCity) {
-            const bookedRooms = await BookingDetails.aggregate([
-                {
-                    $match: {
-                        hotelId: hotel._id,
-
-                        $and: [
-                            { checkIn: { $lte: new Date(checkOutDate) } },
-                            { checkOut: { $gte: new Date(checkInDate) } }
-                        ]
-                    }
-                },
-                {
-                    $group: {
-                        _id: "$hotelId",
-                        totalRoomsBooked: { $sum: "$roomCount" }
-                    }
-                }
-            ]);
-
-            const totalRoomsBooked = bookedRooms.length > 0 ? bookedRooms[0].totalRoomsBooked : 0;
-            const availableRooms = hotel.roomCount - totalRoomsBooked;
-
-            // Check if the available rooms meet the required number of rooms
-            if (availableRooms >= requiredRooms) {
-                const { address, description, type, roomCount, facilities, contactNo, email, password, ...hotelData } = hotel.toObject();
-                availableHotels.push({ ...hotelData, availableRooms });
-            }
-        }
-
-        return res
-            .status(200)
-            .json(
-                new ApiResponse(200, availableHotels, "All hotels with required search condition is returned")
-            )
-    }
-
+    // Iterate over each hotel and check room availability
     for (const hotel of hotelsInCity) {
-        const { address, description, type, roomCount, facilities, contactNo, email, ...hotelData } = hotel.toObject();
-        availableHotels.push({ hotelData });
+        const bookedRooms = await BookingDetails.aggregate([
+            {
+                $match: {
+                    hotelId: hotel._id,
+                    $and: [
+                        { checkInDate: { $lte: new Date(checkOutDate) } },
+                        { checkOutDate: { $gte: new Date(checkInDate) } }
+                    ]
+                }
+            },
+            {
+                $group: {
+                    _id: "$hotelId",
+                    totalRoomsBooked: { $sum: "$roomCount" }
+                }
+            }
+        ]);
+
+        // console.log("-->", bookedRooms);
+        const totalRoomsBooked = bookedRooms.length > 0 ? bookedRooms[0].totalRoomsBooked : 0;
+        const availableRooms = hotel.roomCount - totalRoomsBooked;
+        // Check if the available rooms meet the required number of rooms
+        if (availableRooms >= requiredRooms) {
+            const { address, description, type, roomCount, facilities, contactNo, email, password, ...hotelData } = hotel.toObject();
+            availableHotels.push({ ...hotelData, availableRooms });
+        }
     }
 
     return res
@@ -182,7 +170,7 @@ const getDetailsOfHotel = asyncHandler(async (req, res) => {
 
     return res
         .status(200)
-        .json(200, hotel, "Hotel Details return successfully");
+        .json(new ApiResponse(200, hotel, "Hotel Details return successfully"));
 })
 
 const handleGetReviewRequest = asyncHandler(async (req, res) => {

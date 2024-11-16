@@ -19,6 +19,7 @@ const handleAddRatings = asyncHandler(async (req, res) => {
         return res.status(400).json(new ApiResponse(400,{ errors: errors.array() },"Validation Error"));
     }
 
+    // console.log(req.body);
     const {
         overallRating,
         reviewTitle,
@@ -47,7 +48,7 @@ const handleAddRatings = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid hotel ID.");
     }
     
-    const user = User.find({ userId });
+    const user = await User.find({ userId });
     if (!user) {
         throw new ApiError(404, "User not found.");
     }
@@ -86,7 +87,7 @@ const handleAddRatings = asyncHandler(async (req, res) => {
         
         await hotel.save();
 
-        res.status(201).json(new ApiResponse(201, "Rating added successfully.", newRating));
+        res.status(201).json(new ApiResponse(201, newRating , "Rating added successfully."));
 
     } catch (error) {
         throw new ApiError(500, error.message || "Internal Server Error");
@@ -95,14 +96,42 @@ const handleAddRatings = asyncHandler(async (req, res) => {
 });
 
 const handlegetPreviousBookings = asyncHandler(async (req, res) => {
-
-    const userId = req.user._id;
+    // const userId = req.user._id;
+    const userId = req.body.userId;
     try {
-        const previousBooking = await BookingDetails.find({ userId });
-       
+        // console.log(userId);
+        const previousBookings = await BookingDetails.find({ userId });
+        
+        // console.log(previousBookings);
+        
+        let bookedHotels = [];
+        for(const previousBooking of previousBookings){
+            const hotelId = previousBooking.hotelId;
+
+            // fetching require fields
+            const hotel = await HotelDetails.findById(hotelId).select("hotelName city");
+            const booking = await BookingDetails.findById(previousBooking._id).select("checkInDate checkOutDate roomCount totalCost");
+
+            if (hotel && booking) {
+                const bookedHotel = {
+                    hotelName: hotel.hotelName,
+                    checkInDate: booking.checkInDate,
+                    checkOutDate: booking.checkOutDate,
+                    city: hotel.city,
+                    bookedRooms: booking.roomCount,
+                    totalCost: booking.totalCost,
+                };
+
+                // console.log(bookedHotel);
+                bookedHotels.push(bookedHotel);
+            }
+        };
+
+        // console.log("--->",book  edHotels);
         return res
         .status(200)
-        .json(200, previousBooking, "Previous Booking Details return successfully");
+        .json(new ApiResponse(200, bookedHotels, "Previous Booking Details return successfully"));
+        
     } catch (error) {
         throw new ApiError(500,"An error occurred while retrieving booking history.");
     }

@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import immm from "./s.png";
 
-export default function Signup() {
+export function Signup() {
   const [showCreatePass, setShowCreatePass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [emailError, setEmailError] = useState(false);
