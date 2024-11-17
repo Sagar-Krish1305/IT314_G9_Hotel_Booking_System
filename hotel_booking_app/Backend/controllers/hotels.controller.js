@@ -44,8 +44,9 @@ const RegisterHotel = asyncHandler(async (req, res) => {
             imageUrls.push(uploadurl.url)
         }
     }
-
-    const facilitiesArray = facilities.split(",");
+    let facilitiesArray = [];
+    if (facilities.length > 0)
+        facilitiesArray = facilities.split(",");
 
     const hotel = await HotelDetails.create({
         hotelName,
@@ -55,7 +56,7 @@ const RegisterHotel = asyncHandler(async (req, res) => {
         description,
         roomCount,
         type,
-        facilities,
+        facilities: facilitiesArray,
         pricePerNight,
         contactNo,
         email,
