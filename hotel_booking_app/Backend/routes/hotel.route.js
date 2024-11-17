@@ -1,12 +1,12 @@
 // All routers code should be update here
 
 // import { Router } from "express";
-import { getDetailsOfHotel, handleSearchRequest, RegisterHotel, handleGetReviewRequest } from "../controllers/hotels.controller.js";
+import { getDetailsOfHotel, handleSearchRequest, RegisterHotel, handleAddReviewRequest } from "../controllers/hotels.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { handleAddRatings } from "../controllers/user.controller.js";
 
 import express from 'express';
-import { body,validationResult } from 'express-validator';
+import { body, validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 
 import { newmessage } from '../controllers/registerhandle.js';
@@ -71,47 +71,7 @@ router.route("/hotelRegister").post(
             maxCount: 6
         }
     ]),
-    [
-        // Validation rules 
-        body("hotelName")
-            .notEmpty()
-            .withMessage("Hotel name is required.")
-            .isLength({ min: 3 })
-            .withMessage("Hotel name must be at least 3 characters long."),
-        
-        body("city")
-            .notEmpty()
-            .withMessage("City is required."),
-        
-        body("country")
-            .notEmpty()
-            .withMessage("Country is required."),
-        
-        body("address")
-            .notEmpty()
-            .withMessage("Address is required."),
-        
-        body("description")
-            .isLength({ max: 500 })
-            .withMessage("Description can be up to 500 characters long."),
-        
-        body("contactNo")
-            .notEmpty()
-            .withMessage("Contact number is required.")
-            .matches(/^\d{10}$/)
-            .withMessage("Contact number must be a valid 10-digit number."),
-        
-        body("email")
-            .notEmpty()
-            .withMessage("Email is required.")
-            .isEmail()
-            .withMessage("A valid email is required."),
-        
-        body("password")
-            .notEmpty()
-            .withMessage("Password is Required."),
-    ],
-        RegisterHotel
+    RegisterHotel
 );
 
 
@@ -128,52 +88,11 @@ router.route("/:hotelId/addRatings").post(
 );
 
 
-router.post("/search",[
-        
-    //validation rules 
-    body("city")
-        .notEmpty()
-        .withMessage("City is required."),
-    
-    body("checkInDate")
-        .notEmpty()
-        .withMessage("Check-in date is required."),
-    
-    body("checkOutDate")
-        .notEmpty()
-        .withMessage("Check-out date is required.")
-        .custom((value, { req }) => {
-            const checkIn = new Date(req.body.checkInDate);
-            const checkOut = new Date(value);
-            if (checkIn > checkOut) {
-                throw new Error("Check-out date must be after or the same as the check-in date.");
-            }
-            return true;
-        }),
-        
-], handleSearchRequest);
-// router.route("/search").post(
-//     handleSearchRequest
-// )
+router.post("/search", handleSearchRequest);
 
-router.post("/:hotelId/confirm-booking", [
-    
-    //Validator Rules
-    body("email")
-        .notEmpty()
-        .withMessage("Email is required.")
-        .isEmail()
-        .withMessage("A valid email is required."),  
-    
-    body("phone")
-        .notEmpty()
-        .withMessage("Phone number is required.")
-        .matches(/^\d{10}$/)
-        .withMessage("Phone number must be a valid 10-digit number."),
-
-], handleBookingRequest);
+router.post("/:hotelId/confirm-booking", handleBookingRequest);
 
 router.delete("/:bookingId", handlBookingcancellation);
-router.get("/:hotelId/rating-and-reviews", handleGetReviewRequest);
+router.post("/:hotelId/write-a-review", handleAddReviewRequest);
 
 export default router

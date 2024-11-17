@@ -15,12 +15,6 @@ const transporter = nodemailer.createTransport({
 });
 
 const forgotPassword = async (req, res) => {
-  
-  // Handle validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json(new ApiResponse(400,{ errors: errors.array() },"Validation Error"));
-  }
 
   try {
     const { email } = req.body;
@@ -59,12 +53,6 @@ const forgotPassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
  
-  // Handle validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json(new ApiResponse(400,{ errors: errors.array() },"Validation Error"));
-  }
-
   try {
     const { token, newPassword } = req.body;
 
