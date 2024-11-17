@@ -1,14 +1,19 @@
 import './App.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {Signup} from "./components/Signup";
-import { Login } from './components/Login';
-import { Home } from './components/Home';
+import Signup from "./components/Signup";
+import Login from './components/Login';
+import Home from './components/Home';
 import ForgotPassword from './components/Forgot_Password';
 import ResetPassword from './components/ResetPassword';
-import Profile from './components/Profile';
+// import Profile from './components/Profile';
 import { UserContext } from './components/UserContext';
 import Cookies from 'js-cookie';
+import HotelSearchPage from './components/HotelSearchPage';
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import BookingPage from './components/BookingPage';
+
 
 function App() {
 

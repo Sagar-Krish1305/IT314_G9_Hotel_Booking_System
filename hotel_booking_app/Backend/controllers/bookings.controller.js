@@ -20,14 +20,13 @@ const handleBookingRequest = asyncHandler(async (req, res) => {
     
     // console.log(req.body);
     const userId = req.user?._id;
+    // const userId = "673724f88f99e1e032f07dbc";
     const hotelId = req.params.hotelId;
     // const userId = Math.random().toString(36).substring(2, 12);
     // console.log(userId);
     
-    if (
-        [hotelId, firstName, lastName, email, checkInDate, checkOutDate, phone, roomCount, totalCost].some((field) => field?.trim() === "")
-    ) {
-        throw new ApiError(400, "All mandatory field is required");
+    if (!firstName || !lastName || !email || !checkInDate || !checkOutDate || !phone || !roomCount || !totalCost) {
+        throw new ApiError(400,  "All mandatory field is required");
     }
 
     const hotel = await HotelDetails.findById(hotelId);

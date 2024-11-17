@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import { HotelDetails } from "../models/hotel.model.js";
 import { BookingDetails } from "../models/booking.model.js";
+import { User } from "../models/user.model.js";
 
 const editHotelDetails = asyncHandler(async (req, res) => {
     // get edit parameters from request body
@@ -48,4 +49,47 @@ const hotelDetails = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, hotel, "Hotel details fetched successfully"));
 });
 
-export { editHotelDetails, hotelDetails };
+const getBookings = asyncHandler(async (req, res) => {
+    const hotelId = req.params.hotelId;
+
+     try {
+        const Bookings = await BookingDetails.find({ hotelId });
+
+        // console.log(Bookings);
+         
+        let Users = [];
+        for (const Booking of Bookings) {
+            const userId = Booking.userId;
+             
+            // fetching require fields
+            const user = await User.findById(userId).select("first_name last_name e_mail mobile_number");
+            const booking = await BookingDetails.findById(Booking._id).select("checkInDate checkOutDate roomCount totalCost");
+
+            if (user && booking) {
+                const User = {
+                    name: `${user.first_name} ${user.last_name}`,
+                    email: user.e_mail,
+                    contactNo: user.mobile_number,
+                    checkInDate: booking.checkInDate,
+                    checkOutDate: booking.checkOutDate,
+                    bookedRooms: booking.roomCount,
+                    totalCost: booking.totalCost,
+                };
+
+                // console.log(User);
+                Users.push(User);
+            }
+        }
+
+        // console.log("--->",Users);
+        return res
+            .status(200)
+            .json(new ApiResponse(200, Users, "Booking Details return successfully"));
+
+    } catch (error) {
+        throw new ApiError(500, "An error occurred while retrieving booking.");
+    }
+
+});
+
+export { editHotelDetails, hotelDetails,getBookings };
