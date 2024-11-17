@@ -93,6 +93,7 @@ router.post("/search", handleSearchRequest);
 router.post("/:hotelId/confirm-booking", handleBookingRequest);
 
 router.delete("/:bookingId", handlBookingcancellation);
+// router.get("/:hotelId/rating-and-reviews", handleGetReviewRequest);
 router.post("/:hotelId/write-a-review", handleAddReviewRequest);
 
 export default router
