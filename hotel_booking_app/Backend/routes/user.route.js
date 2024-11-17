@@ -10,57 +10,57 @@ const Router = express.Router();
 
 Router.post(
     "/createlogin", [
-        
-        //validation rules 
-        body("email")
-            .isEmail()
-            .withMessage("A valid email is required."),
-        
-        body("password")
-            .isLength({ min: 8 })
-            .withMessage("Password must be at least 8 characters long.")
-            .matches(/[A-Z]/)
-            .withMessage("Password must contain at least one uppercase letter.")
-            .matches(/[a-z]/)
-            .withMessage("Password must contain at least one lowercase letter.")
-            .matches(/\d/)
-            .withMessage("Password must contain at least one number.")
-            .matches(/[@$!%*?&]/)
-            .withMessage("Password must contain at least one special character (@, $, !, %, *, ?, &)."),
-        
-    ], login);
-    
+
+    //validation rules 
+    body("email")
+        .isEmail()
+        .withMessage("A valid email is required."),
+
+    body("password")
+        .isLength({ min: 8 })
+        .withMessage("Password must be at least 8 characters long.")
+        .matches(/[A-Z]/)
+        .withMessage("Password must contain at least one uppercase letter.")
+        .matches(/[a-z]/)
+        .withMessage("Password must contain at least one lowercase letter.")
+        .matches(/\d/)
+        .withMessage("Password must contain at least one number.")
+        .matches(/[@$!%*?&]/)
+        .withMessage("Password must contain at least one special character (@, $, !, %, *, ?, &)."),
+
+], login);
+
 
 Router.post("/forgot-password", [
-        //validation rules 
+    //validation rules 
 
-        body("email")
-            .isEmail()
-            .withMessage("A valid email is required."),
-    ], forgotPassword);
+    body("email")
+        .isEmail()
+        .withMessage("A valid email is required."),
+], forgotPassword);
 
 
 Router.post("/reset-password", [
 
-        //validation rules 
-        body("token")
-            .notEmpty()
-            .withMessage("Reset token is required."),
-    
-        body("newPassword")
-            .isLength({ min: 8 })
-            .withMessage("Password must be at least 8 characters long.")
-            .matches(/[A-Z]/)
-            .withMessage("Password must contain at least one uppercase letter.")
-            .matches(/[a-z]/)
-            .withMessage("Password must contain at least one lowercase letter.")
-            .matches(/\d/)
-            .withMessage("Password must contain at least one number.")
-            .matches(/[@$!%*?&]/)
-            .withMessage("Password must contain at least one special character (@, $, !, %, *, ?, &).")
-        
-    ], resetPassword);
-    
+    //validation rules 
+    body("token")
+        .notEmpty()
+        .withMessage("Reset token is required."),
+
+    body("newPassword")
+        .isLength({ min: 8 })
+        .withMessage("Password must be at least 8 characters long.")
+        .matches(/[A-Z]/)
+        .withMessage("Password must contain at least one uppercase letter.")
+        .matches(/[a-z]/)
+        .withMessage("Password must contain at least one lowercase letter.")
+        .matches(/\d/)
+        .withMessage("Password must contain at least one number.")
+        .matches(/[@$!%*?&]/)
+        .withMessage("Password must contain at least one special character (@, $, !, %, *, ?, &).")
+
+], resetPassword);
+
 
 // Router.post("/google-signin", googleSignIn);
 // Router.put('/update-profile', authMiddleware, updateProfile);
