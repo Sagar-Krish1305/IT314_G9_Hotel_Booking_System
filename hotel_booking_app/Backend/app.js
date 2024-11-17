@@ -18,11 +18,8 @@ app.use(cookieParser())
 // Base router file should be updated here
 import hotelRouter from "./routes/hotel.route.js"
 import userRouter from "./routes/user.route.js";
-import managerRouter from "./routes/manager.route.js";
-import { asyncHandler } from "./utils/asyncHandler.js";
 
 app.use("/api/v1/hotels", hotelRouter);
 app.use("/api/v1/user", userRouter);
-app.use("/api/v1/manager", managerRouter);
 
 export { app }
