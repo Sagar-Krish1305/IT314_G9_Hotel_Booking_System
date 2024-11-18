@@ -26,10 +26,21 @@ const RegisterHotel = asyncHandler(async (req, res) => {
 
     if (
         [hotelName, city, country, address, description,
-            roomCount, pricePerNight, contactNo, email, password].some((field) => field?.trim() === "")
+            roomCount, pricePerNight, contactNo, email, password].some((field) => field?.trim === "")
     ) {
         throw new ApiError(400, "All mandatory field is required")
     }
+
+    const existingHotel = await HotelDetails.findOne({email: email});
+    if(existingHotel){
+        return res.
+        status(400).
+        json(
+            new ApiResponse(400, [], "Hotel with this email already exist!!")
+        )
+    }
+
+    
 
     let imagesss;
     const imageUrls = [];
@@ -89,7 +100,9 @@ const handleSearchRequest = asyncHandler(async (req, res) => {
 
 
     const { city, checkInDate, checkOutDate, requiredRooms } = req.body
-
+    // console.log("123");
+    // console.log(req.body);
+    // console.log(city, checkInDate, checkOutDate, requiredRooms);
     if (!(city)) {
         throw new ApiError(400, "city/country/hotel name is required")
     }
@@ -224,161 +237,19 @@ const getDetailsOfHotel = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(new ApiResponse(200, { hotel, allAverageRatings, userWiseRatings }, "Hotel ratings and other data retrieved successfully"));
-});
 
-const handleAddReviewRequest = asyncHandler(async (req, res) => {
-    const userId = req.user.userId;
-    const hotelId = req.params.hotelId.slice(1);
+    // return res
+    //     .status(200)
+    //     .json(new ApiResponse(200, allAverageRatigs, "Hotel ratings retrieved successfully"));
 
-    // Check if the hotel has been booked by the user
-    const booking = await BookingDetails.findOne({ userId, hotelId });
+    return res
+        .status(200)
+        .json(200, hotel, "Hotel Details return successfully");
+})
 
-    if (!booking) {
-        throw new ApiError(400, "You have never booked the hotel.");
-    }
-
-    const { overallRating, reviewTitle, reviewDescription, serviceRating, roomsRating, cleanlinessRating, foodRating } = req.body;
-
-    if (!overallRating || !reviewDescription || !serviceRating || !roomsRating || !cleanlinessRating || !foodRating) {
-        throw new ApiError(400, "Please provide all the ratings ");
-    }
-
-    const hotel = await HotelDetails.findById(hotelId).select("-password").populate("ratings");
-
-    //upload images on cloudinary and store secure urls in dataBase
-    const imageUrls = [];
-    if (req.files && req.files.length > 0) {
-        for (const file of req.files) {
-            const result = await uploadOnCloudinary(file.path);
-            imageUrls.push(result.secure_url);
-        }
-    }
-
-    try {
-        const newRating = await Rating.create({
-            hotelId,
-            userId,
-            overallRating,
-            reviewTitle,
-            reviewDescription,
-            serviceRating,
-            roomsRating,
-            cleanlinessRating,
-            foodRating,
-            reviewImages: imageUrls
-        });
-
-        hotel.ratings.push(newRating._id);
-
-        await hotel.save();
-
-        res.status(201).json(new ApiResponse(201, newRating, "Rating added successfully."));
-
-    } catch (error) {
-        throw new ApiError(500, error.message || "Internal Server Error");
-    }
-});
-
-const getNearestHotels = async (req, res) => {
-    try {
-        const { latitude, longitude, maxDistance } = req.query;
-
-        // Validation for required query parameters
-        if (!latitude || !longitude || !maxDistance) {
-            throw new ApiError(400, "Latitude, Longitude, and Max Distance are required");
-        }
-
-        // Validate if latitude and longitude are numbers
-        if (isNaN(latitude) || isNaN(longitude)) {
-            throw new ApiError(400, "Latitude and Longitude should be valid numbers");
-        }
-
-        // Convert maxDistance to a number (assumed in meters)
-        const maxDistInMeters = parseInt(maxDistance);
-
-        // Find hotels within the max distance from the given coordinates
-        const hotels = await HotelDetails.find({
-            location: {
-                $near: {
-                    $geometry: {
-                        type: "Point",
-                        coordinates: [parseFloat(longitude), parseFloat(latitude)],
-                    },
-                    $maxDistance: maxDistInMeters,
-                },
-            },
-        });
-
-        if (hotels.length === 0) {
-            return res
-                .status(200)
-                .json(new ApiResponse(200, [], "No hotels found within the specified distance"));
-        }
-
-        return res
-            .status(200)
-            .json(new ApiResponse(200, hotels, "Hotels within the specified distance returned successfully"));
-    } catch (error) {
-        return res
-            .status(error.statusCode || 500)
-            .json(new ApiResponse(error.statusCode || 500, null, error.message));
-    }
-};
-
-
-// getting current location of user for filtering data
-const getCurrentLocation = (pos) => {
-    let userLocation = {}
-    navigator.geolocation.getCurrentPosition((pos) => {
-        var crd = pos.coords;
-
-        console.log("Your current position is:");
-        console.log(`Latitude : ${crd.latitude}`);
-        console.log(`Longitude: ${crd.longitude}`);
-        console.log(`More or less ${crd.accuracy} meters.`);
-
-        userLocation = {
-            latitude: crd.latitude,
-            longitude: crd.longitude
-        }
-    });
-
-    return userLocation
-}
-
-const getUserLocation = () => {
-    const userLocation = {}
-    if (navigator.geolocation) {
-        navigator.permissions
-            .query({ name: "geolocation" })
-            .then(function (result) {
-                if (result.state === "granted") {
-                    console.log(result.state);
-                    return getCurrentLocation();
-                } else if (result.state === "prompt") {
-                    console.log(result.state);
-                    return getCurrentLocation();
-                } else if (result.state === "denied") {
-                    //If denied then you have to show instructions to enable location
-                    alert("Please Allow You Location!");
-                }
-                result.onchange = function () {
-                    console.log(result.state);
-                };
-            });
-
-    } else {
-        alert("Sorry Not available!");
-    }
-
-    return userLocation
-}
 
 export {
     RegisterHotel,
     handleSearchRequest,
-    getDetailsOfHotel,
-    handleAddReviewRequest,
-    getNearestHotels,
-    getUserLocation
+    getDetailsOfHotel
 }
