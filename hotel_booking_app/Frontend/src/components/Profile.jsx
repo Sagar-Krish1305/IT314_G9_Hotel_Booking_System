@@ -9,11 +9,37 @@ export default function Profile() {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(user);
+  // const [hotelData,setHotelData] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditedUser(prev => ({ ...prev, [name]: value }));
   };
+
+  const gethoteldata = async () => {
+    const token = Cookies.get('token');
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/user/bookig-history', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        // setHotelData(data);
+        console.log(data.data);
+        navigate('/BookingHistory' , {state: {dataa:data.data}});
+      } else {
+        console.error('Failed to fetch hotel data')
+        toast.error('Failed to fetch hotel data')
+      }
+    } catch (error) {
+      console.error('Error fetching hoteldata:', error)
+      toast.error('Error fetching hoteldata')
+    }
+  }
 
   const handleUpdateProfile = async () => {
     try {
@@ -24,7 +50,7 @@ export default function Profile() {
         return;
       }
 
-      const response = await fetch('/api/v1/update-profile', {
+      const response = await fetch('http://localhost:8000/api/v1/user/update-profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -102,6 +128,12 @@ export default function Profile() {
               onClick={isEditing ? handleUpdateProfile : () => setIsEditing(true)}
             >
               {isEditing ? 'Update Profile' : 'Edit Profile'}
+            </button>
+            <button 
+              className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
+              onClick={gethoteldata}
+            >
+              Booking History
             </button>
           </div>
         </div>
