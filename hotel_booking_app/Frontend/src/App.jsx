@@ -15,7 +15,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import BookingPage from './components/BookingPage';'
 import Footer from './components/Footer';
 import AboutUs from './components/AboutUs';
-import Members from './components/Members';
 
 function App() {
   const [user, setUser] = useState(null);
