@@ -12,11 +12,12 @@ import Cookies from 'js-cookie';
 import HotelSearchPage from './components/HotelSearchPage';
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import BookingPage from './components/BookingPage';
-
+import BookingPage from './components/BookingPage';'
+import Footer from './components/Footer';
+import AboutUs from './components/AboutUs';
+import Members from './components/Members';
 
 function App() {
-
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -52,26 +53,30 @@ function App() {
   if (loading) {
       return <div>Loading...</div>;
   }
-    return (
-        <UserContext.Provider value={{ user, setUser}}>
-            <Router>
-                <Routes>
-                    {/* <Route path="/" element={<Navbar />} /> */}
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
-                    <Route path="/reset-password/:token" element={<ResetPassword />} />
-                    {/* <Route path="/ppp" element={<PPP />} /> */}
-                    <Route 
-                        path="/profile" 
-                        element={user ? <Profile /> : <Navigate to="/login" />} 
-                    />
-                </Routes>
-                <ToastContainer />
-            </Router>
-        </UserContext.Provider>
-    );
+
+  return (
+      <UserContext.Provider value={{ user, setUser }}>
+          <Router>
+              <div>
+                  <Routes>
+                      <Route path="/home" element={<Home />} />
+                      <Route path="/signup" element={<Signup />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/forgot-password" element={<ForgotPassword />} />
+                      <Route path="/reset-password/:token" element={<ResetPassword />} />
+                      <Route 
+                          path="/profile" 
+                          element={user ? <Profile /> : <Navigate to="/login" />} 
+                      />
+                      <Route path="/about-us" element={<AboutUs />} />
+                      <Route path="/members" element={<Members />} /> 
+                  </Routes>
+                  <Footer />
+                  <ToastContainer />
+              </div>
+          </Router>
+      </UserContext.Provider>
+  );
 }
 
 export default App;
