@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
+import { useNavigate, useParams } from 'react-router-dom';
+import Cookies from 'js-cookie'
 
 function ReviewForm() {
     const [rating, setRating] = useState(0);
@@ -17,6 +19,9 @@ function ReviewForm() {
         setPhotos([...photos, ...e.target.files]);
     };
 
+    const navigate = useNavigate();
+    const {id} = useParams();
+    
     const handleData = async (e) => {
         e.preventDefault(); // Prevent default form submission behavior
     
@@ -32,12 +37,17 @@ function ReviewForm() {
             photos: photos.map(photo => photo.name), // Only save file names
             certify,
         };
+        
+
     
         try {
-            const response = await fetch('http://localhost:8000/api/v1/hotels/addRatings', {
+            const token = Cookies.get('token');
+            console.log("shaym id, ",id);
+            const response = await fetch(`http://localhost:8000/api/v1/hotels/${id}/addRatings`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(formData),
             });
@@ -50,9 +60,12 @@ function ReviewForm() {
                 console.error('Failed:', response.status, response.statusText);
                 alert('Failed to submit the review. Please try again.');
             }
+
+            navigate( `/hotel/${id}`);
         } catch (error) {
             console.error('Error:', error);
             alert('An error occurred while submitting your review. Please try again later.');
+            navigate( `/hotel/${id}`);
         }
     };
 
@@ -175,6 +188,7 @@ function ReviewForm() {
 
                 {/* Submit Button */}
                 <button
+                    onClick={handleData}
                     type="submit"
                     className="w-full py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700"
                     disabled={!certify}

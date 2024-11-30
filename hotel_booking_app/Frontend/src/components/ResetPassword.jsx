@@ -17,7 +17,7 @@ export default function ResetPassword() {
       return toast.error('Passwords do not match');
     }
     try {
-      const response = await fetch('/api/v1/reset-password', {
+      const response = await fetch('http://localhost:8000/api/v1/user/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
