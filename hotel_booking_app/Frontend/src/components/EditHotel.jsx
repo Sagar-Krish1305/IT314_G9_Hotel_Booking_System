@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import HotelField from './HotelField';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import config from '../config';
 
 
 const HotelForm = () => {
@@ -68,10 +69,10 @@ const filledData = location.state?.selectedHotel;
       // console.log("shyam- ",formData);
 
       console.log("shyam",hotelData);
-      const response = await axios.post('http://localhost:8000/api/v1/manager/edit-hotel-details',hotelData);
+      const response = await axios.post(`${config.BACKEND_ID}/api/v1/manager/edit-hotel-details`,hotelData);
       console.log(response);
-    console.log('afdasdfas',response.data.data.hotel);
-    console.log(response.data.data.success);
+      console.log('afdasdfas',response.data.data.hotel);
+      console.log(response.data.data.success);
 
 // try {
 //   const result = await axios.post(`${config.BACKEND_API}/api/user/signup`, data, {

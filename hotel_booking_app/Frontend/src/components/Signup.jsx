@@ -64,7 +64,7 @@ export default function Signup() {
     const { firstName, lastName, email, mobileNumber, password, confirmPassword, userType } = formData;
 
     try {
-      const res = await fetch("http://localhost:8000/api/v1/user/createmessage", {
+      const res = await fetch(`${config.BACKEND_ID}/api/v1/user/createmessage`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import Cookies from 'js-cookie'
+import config from '../config';
 
 function ReviewForm() {
     const [rating, setRating] = useState(0);
@@ -43,7 +44,7 @@ function ReviewForm() {
         try {
             const token = Cookies.get('token');
             console.log("shaym id, ",id);
-            const response = await fetch(`http://localhost:8000/api/v1/hotels/${id}/addRatings`, {
+            const response = await fetch(`${config.BACKEND_ID}/api/v1/hotels/${id}/addRatings`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

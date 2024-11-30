@@ -3,6 +3,7 @@ import { UserContext } from './UserContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
+import config from '../config';
 
 export default function Profile() {
   const { user, setUser } = useContext(UserContext);
@@ -19,7 +20,7 @@ export default function Profile() {
   const gethoteldata = async () => {
     const token = Cookies.get('token');
     try {
-      const response = await fetch('http://localhost:8000/api/v1/user/bookig-history', {
+      const response = await fetch(`${config.BACKEND_ID}/api/v1/user/bookig-history`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -50,7 +51,7 @@ export default function Profile() {
         return;
       }
 
-      const response = await fetch('http://localhost:8000/api/v1/user/update-profile', {
+      const response = await fetch(`${config.BACKEND_ID}/api/v1/user/update-profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

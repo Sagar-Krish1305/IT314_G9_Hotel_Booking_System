@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import HotelField from './HotelField';
+import config from '../config';
 
 const HotelForm = () => {
   const [hotelData, setHotelData] = useState({
@@ -58,7 +59,7 @@ const HotelForm = () => {
     hotelData.images.forEach((file) => formData.append('images', file));
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/hotels/hotelRegister', {
+      const response = await fetch(`${config.BACKEND_ID}/api/v1/hotels/hotelRegister`, {
         method: 'POST',
         body: formData, // Submit the FormData as body
       });

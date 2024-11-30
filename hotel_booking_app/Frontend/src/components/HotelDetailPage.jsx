@@ -10,6 +10,7 @@ import Cookies from 'js-cookie';
 import Navbar from "./Navbar";
 import Navbar2 from "./Navbar_2";
 import { toast } from "react-toastify";
+import config from "../config";
 
 
 const Header = () => (
@@ -43,7 +44,7 @@ export default function HotelDetailPage () {
   const handleHotelClick = async () => {
     try {
       // Fetch the detailed hotel information
-      const response = await fetch(`http://localhost:8000/api/v1/hotels/${id}`, {
+      const response = await fetch(`${config.BACKEND_ID}/api/v1/hotels/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

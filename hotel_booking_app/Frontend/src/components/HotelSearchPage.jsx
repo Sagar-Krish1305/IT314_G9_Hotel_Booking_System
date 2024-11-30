@@ -8,6 +8,7 @@ import ReviewForm from "./ReviewForm";
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import Navbar2 from "./Navbar_2";
+import config from "../config";
 // import { Star, ChevronLeft, ChevronRight, MapPin, ArrowRight } from 'lucide-react'
 // import { HotelDetailPage } from "./HotelDetailPage";
 
@@ -318,7 +319,7 @@ export default function HotelSearchPage() {
         setError(null);
   
         try {
-          const response = await fetch('http://localhost:8000/api/v1/hotels/search', {
+          const response = await fetch(`${config.BACKEND_ID}/api/v1/hotels/search`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -351,7 +352,7 @@ export default function HotelSearchPage() {
 
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/hotels/search', {
+      const response = await fetch(`${config.BACKEND_ID}/api/v1/hotels/search`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

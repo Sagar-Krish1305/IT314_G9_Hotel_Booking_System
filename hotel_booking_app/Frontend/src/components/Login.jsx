@@ -6,6 +6,7 @@ import { UserContext } from "./UserContext";
 import Cookies from 'js-cookie';
 import immm from '../assets/s.png';
 import Navbar from "./Navbar";
+import config from "../config";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,7 +46,7 @@ export default function Login() {
     }
     const { email, hotelId, password, userType } = formData;
     try {
-      const endpoint = userType === "customer" ? "http://localhost:8000/api/v1/user/createlogin" : "http://localhost:8000/api/v1/manager/login";
+      const endpoint = userType === "customer" ? `${config.BACKEND_ID}/api/v1/user/createlogin` : `${config.BACKEND_ID}/api/v1/manager/login`;
       const payload = userType === "customer" ? { email, password } : { email:hotelId, password };
       console.log(endpoint);
       const res = await fetch(endpoint, {
@@ -109,7 +110,7 @@ export default function Login() {
   function initializeGoogleSignIn() {
     if (window.google) {
       window.google.accounts.id.initialize({
-        client_id: "312868104346-5s6cqltb36i50uckprvsfrcv130n1mmf.apps.googleusercontent.com",
+        client_id: `${config.GOOGLE_CLIENT_ID}`,
         callback: handleGoogleSignIn,
       });
       window.google.accounts.id.renderButton(
@@ -122,7 +123,7 @@ export default function Login() {
   const handleGoogleSignIn = async (response) => {
     try {
       console.log(response);
-      const res = await fetch("http://localhost:8000/api/v1/user/google-signin", {
+      const res = await fetch(`${config.BACKEND_ID}/api/v1/user/google-signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -5,6 +5,7 @@ import { Phone } from 'lucide-react';  // Import the Phone icon
 import HotelReview from './HotelReview';
 import Cookies from "js-cookie"
 import { useLocation, useNavigate } from "react-router-dom";
+import config from "../config";
 // import { Navigate } from "react-router-dom";
 
 
@@ -125,7 +126,7 @@ export default function ManagerHotel() {
             const handleHotelClick = async () => {
                 try {
                   // Fetch the detailed hotel information
-                  const response = await fetch(`http://localhost:8000/api/v1/hotels/${hotelId}`, {
+                  const response = await fetch(`${config.BACKEND_ID}/api/v1/hotels/${hotelId}`, {
                     method: "GET",
                     headers: {
                       "Content-Type": "application/json",
