@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import Cookies from 'js-cookie';
 import immm from "./s.png";
+import Navbar from "./Navbar";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +20,7 @@ export default function Login() {
   });
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const hotelIdRegex = /^[A-Z0-9]{6}$/;
+  const hotelIdRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   function changeHandler(event) {
     const { name, value } = event.target;
@@ -44,25 +45,35 @@ export default function Login() {
     }
     const { email, hotelId, password, userType } = formData;
     try {
-      const res = await fetch("/api/v1/createlogin", {
+      const endpoint = userType === "customer" ? "http://localhost:8000/api/v1/user/createlogin" : "http://localhost:8000/api/v1/manager/login";
+      const payload = userType === "customer" ? { email, password } : { email:hotelId, password };
+      console.log(endpoint);
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, hotelId, password, userType }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (res.status === 200 && data.success) {
         toast.success("Login Successful");
         Cookies.set("token", data.token, { expires: 7 });
-        Cookies.set("firstname", data.user.firstName, { expires: 7 });
-        Cookies.set("lastname", data.user.lastName, { expires: 7 });
-        Cookies.set("email", data.user.email, { expires: 7 });
-        Cookies.set("mobileno", data.user.mobileNumber, { expires: 7 });
-        setUser(data.user);
-        navigate("/home");
-      } else if (res.status === 400 && data.message === "User not registered") {
-        toast.error("User not registered");
+        
+        if (userType === "customer") {
+          Cookies.set("firstname", data.user.firstName, { expires: 7 });
+          Cookies.set("lastname", data.user.lastName, { expires: 7 });
+          Cookies.set("email", data.user.email, { expires: 7 });
+          Cookies.set("mobileno", data.user.mobileNumber, { expires: 7 });
+          setUser(data.user);
+          navigate("/home");
+        } else {
+          Cookies.set("hotelId", data.hotel.id, { expires: 7 });
+          setUser(data.user);
+          navigate(`/manager/hotel`);
+        }
+      } else if (res.status === 400 && data.message === (userType === "customer" ? "User not registered" : "Hotel not registered")) {
+        toast.error(userType === "customer" ? "User not registered" : "Hotel not registered");
       } else if (res.status === 400 && data.message === "Incorrect password") {
         toast.error("Incorrect password");
       } else {
@@ -85,13 +96,15 @@ export default function Login() {
       return script;
     };
 
-    const script = loadGoogleScript();
-    return () => {
-      if (script) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
+    if (formData.userType === "customer") {
+      const script = loadGoogleScript();
+      return () => {
+        if (script) {
+          document.body.removeChild(script);
+        }
+      };
+    }
+  }, [formData.userType]);
 
   function initializeGoogleSignIn() {
     if (window.google) {
@@ -108,12 +121,14 @@ export default function Login() {
 
   const handleGoogleSignIn = async (response) => {
     try {
-      const res = await fetch("/api/v1/google-signin", {
+      console.log(response);
+      const res = await fetch("http://localhost:8000/api/v1/user/google-signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ token: response.credential }),
+        credentials: 'include',
       });
       const data = await res.json();
       if (data.success) {
@@ -135,6 +150,7 @@ export default function Login() {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden">
         <div className="flex flex-col md:flex-row">
@@ -266,31 +282,37 @@ export default function Login() {
                 </button>
               </form>
               
-              <div className="mt-6">
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">Or continue with</span>
-                  </div>
-                </div>
+              {formData.userType === "customer" && (
+                <>
+                  <div className="mt-6">
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-300"></div>
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                      </div>
+                    </div>
 
-                <div className="mt-6">
-                  <div id="googleSignInDiv" className="flex justify-center"></div>
-                </div>
-              </div>
+                    <div className="mt-6">
+                      <div id="googleSignInDiv" className="flex justify-center"></div>
+                    </div>
+                  </div>
+                  
+                </>
+              )}
 
               <div className="mt-6 text-center text-sm">
                 <span className="text-gray-600">Don't have an account? </span>
                 <a href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
-                  Sign up
+                   Sign up
                 </a>
-              </div>
+           </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    </>
   );
 }

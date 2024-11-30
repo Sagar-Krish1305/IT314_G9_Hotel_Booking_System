@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import immm from "./s.png";
 
-export function Signup() {
+export default function Signup() {
   const [showCreatePass, setShowCreatePass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -64,7 +64,7 @@ export function Signup() {
     const { firstName, lastName, email, mobileNumber, password, confirmPassword, userType } = formData;
 
     try {
-      const res = await fetch("/api/v1/createmessage", {
+      const res = await fetch("http://localhost:8000/api/v1/user/createmessage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

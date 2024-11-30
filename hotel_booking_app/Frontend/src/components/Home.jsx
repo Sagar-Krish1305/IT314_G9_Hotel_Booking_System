@@ -1,7 +1,14 @@
-import { useState, useEffect, useRef } from 'react'
+
+
+
+
+import React, { useState, useEffect, useRef} from 'react'
 import { FaHeart, FaRegHeart, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { ExternalLink } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'; 
+import Navbar from './Navbar'
+import Footer from './Footer';
 
 const HotelCard = ({ hotel, isFavorite, onToggleFavorite }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -136,11 +143,13 @@ const HotelCard = ({ hotel, isFavorite, onToggleFavorite }) => {
   )
 }
 
-export function Home() {
+export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [favoriteHotels, setFavoriteHotels] = useState([])
   const scrollContainerRef = useRef(null)
+  const navigate  = useNavigate();
+ 
 
   useEffect(() => {
     const handleScroll = () => {
@@ -285,32 +294,45 @@ export function Home() {
     }
   }
 
+  const [location, setLocation] = useState(''); // Location state
+  const [checkInDate, setCheckInDate] = useState(''); // Check-in date state
+  const [checkOutDate, setCheckOutDate] = useState(''); // Check-out date state
+  const [guests, setGuests] = useState(1); // Guest count state
+  const [myData, setMyData] = useState({}); // State to hold submitted form data
+
+  // Handle increment
+  const increment = () => {
+    setGuests(prevGuests => prevGuests + 1);
+  };
+
+  // Handle decrement
+  const decrement = () => {
+    if (guests > 1) {
+      setGuests(prevGuests => prevGuests - 1);
+    }
+  };
+
+  // Handle form submission
+  const changedata = (e) => {
+    e.preventDefault(); // Prevent page reload on form submit
+
+    const data = {
+      location,
+      checkInDate,
+      checkOutDate,
+      guests
+    };
+
+    // Update myData state with the form data
+    setMyData(data);
+    console.log('Form Data:', data); // You can check the data here or send it to an API
+    const flag=true;
+    navigate("/hotel", { state: { data , flag } });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-md' : 'bg-transparent'
-      }`}>
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
-            <span className={`text-2xl font-bold ${isScrolled ? 'text-gray-900' : 'text-white'}`}>
-                🏨 BestLikeHome
-            </span>
-          </Link>
-          <div className="hidden md:flex items-center space-x-6">
-            <Link to="/hotels" className={`${isScrolled ? 'text-gray-700' : 'text-white'} hover:text-blue-500`}>Hotels</Link>
-            <Link to="/flights" className={`${isScrolled ? 'text-gray-700' : 'text-white'} hover:text-blue-500`}>Flights</Link>
-            <Link to="/tours" className={`${isScrolled ? 'text-gray-700' : 'text-white'} hover:text-blue-500`}>Tours</Link>
-            <Link to="/cars" className={`${isScrolled ? 'text-gray-700' : 'text-white'} hover:text-blue-500`}>Cars</Link>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Sign in</button>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Sign up</button>
-          </div>
-          <button className="md:hidden bg-transparent border-none p-2">
-            <span className="block w-6 h-0.5 bg-current mb-1"></span>
-            <span className="block w-6 h-0.5 bg-current mb-1"></span>
-            <span className="block w-6 h-0.5 bg-current"></span>
-          </button>
-        </div>
-      </nav>
+      <Navbar isScrolled={isScrolled} />
 
       <div className="relative h-screen">
         {backgroundImages.map((image, index) => (
@@ -337,39 +359,73 @@ export function Home() {
           <p className="text-lg text-white text-center mb-8 max-w-2xl">
             Discover and book your ideal accommodations from our vast selection of hotels worldwide.
           </p>
-          
-          <div className="w-full max-w-4xl p-6 bg-white/90 backdrop-blur-md rounded-lg shadow-lg">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="relative">
-                <span className="absolute left-3 top-3 text-gray-400">📍</span>
-                <input type="text" placeholder="Where are you going?" className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500" />
-              </div>
-              <div className="relative">
-                <span className="absolute left-3 top-3 text-gray-400">📅</span>
-                <input type="date" className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500" />
-              </div>
-              <div className="relative">
-                <span className="absolute left-3 top-3 text-gray-400">📅</span>
-                <input type="date" className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500" />
-              </div>
-              <div className="relative">
-                <span className="absolute left-3 top-3 text-gray-400">👥</span>
-                <select className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 appearance-none">
-                  <option value="">Guests</option>
-                  <option value="1">1 Guest</option>
-                  <option value="2">2 Guests</option>
-                  <option value="3">3 Guests</option>
-                  <option value="4">4+ Guests</option>
-                </select>
-              </div>
-            </div>
-            <button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded flex items-center justify-center">
-              <span className="mr-2">🔍</span>
-              Search Hotels
+          <form onSubmit={changedata}>
+      <div className="w-full max-w-4xl p-6 bg-white/90 backdrop-blur-md rounded-lg shadow-lg">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="relative">
+            <span className="absolute left-3 top-3 text-gray-400">📍</span>
+            <input
+              type="text"
+              placeholder="Where are you going?"
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+              value={location} // Controlled input
+              onChange={(e) => setLocation(e.target.value)} // Update location on change
+            />
+          </div>
+          <div className="relative">
+            <span className="absolute left-3 top-3 text-gray-400">📅</span>
+            <input
+              type="date"
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+              value={checkInDate} // Controlled input
+              onChange={(e) => setCheckInDate(e.target.value)} // Update checkInDate on change
+            />
+          </div>
+          <div className="relative">
+            <span className="absolute left-3 top-3 text-gray-400">📅</span>
+            <input
+              type="date"
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+              value={checkOutDate} // Controlled input
+              onChange={(e) => setCheckOutDate(e.target.value)} // Update checkOutDate on change
+            />
+          </div>
+          <div className="flex items-center space-x-4">
+            {/* Title */}
+            <span className="text-md font-semibold text-gray-700">Rooms:</span>
+
+            {/* Increment/Decrement Buttons */}
+            <button
+              onClick={decrement}
+              type="button" // Prevent form submission
+              className="w-10 h-10 flex items-center justify-center bg-blue-400 text-gray-600 rounded-full hover:bg-blue-600 transition duration-200"
+            >
+              -
+            </button>
+
+            <span className="text-lg font-medium text-gray-700">{guests}</span>
+
+            <button
+              onClick={increment}
+              type="button" // Prevent form submission
+              className="w-10 h-10 flex items-center justify-center bg-blue-400 text-gray-600 rounded-full hover:bg-blue-600 transition duration-200"
+            >
+              +
             </button>
           </div>
         </div>
+        <button
+          type="submit"
+          className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded flex items-center justify-center"
+        >
+          <span className="mr-2">🔍</span>
+          Search Hotels
+        </button>
       </div>
+    </form>
+        </div>
+      </div>
+ 
 
       <div className="container mx-auto px-4 py-16">
         <div className="flex justify-between items-center mb-8">
@@ -439,6 +495,7 @@ export function Home() {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   )
 }

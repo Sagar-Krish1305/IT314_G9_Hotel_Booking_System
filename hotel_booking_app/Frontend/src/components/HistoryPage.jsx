@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { CalendarDays, Users, CreditCard, Mail, User, Building, MapPin } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import Navbar from './Navbar'
+import Navbar2 from './Navbar_2'
 
 const BookingHistoryCard = ({
   hotelName,
@@ -32,14 +33,14 @@ const BookingHistoryCard = ({
               <CalendarDays className="w-4 h-4 text-gray-500 mr-2" />
               <div>
                 <p className="text-xs font-medium text-gray-600">Check-in</p>
-                <p className="text-sm text-gray-800">{checkInDate}</p>
+                <p className="text-sm text-gray-800">{checkInDate.slice(0, 10)}</p>
               </div>
             </div>
             <div className="flex items-center">
               <CalendarDays className="w-4 h-4 text-gray-500 mr-2" />
               <div>
                 <p className="text-xs font-medium text-gray-600">Check-out</p>
-                <p className="text-sm text-gray-800">{checkOutDate}</p>
+                <p className="text-sm text-gray-800">{checkOutDate.slice(0, 10)}</p>
               </div>
             </div>
             <div className="flex items-center">
@@ -55,14 +56,14 @@ const BookingHistoryCard = ({
               <CreditCard className="w-4 h-4 text-gray-500 mr-2" />
               <div>
                 <p className="text-xs font-medium text-gray-600">Price per Night</p>
-                <p className="text-sm text-gray-800">${pricePerNight.toFixed(2)}</p>
+                <p className="text-sm text-gray-800">₹{pricePerNight.toFixed(2)}</p>
               </div>
             </div>
             <div className="flex items-center">
               <CreditCard className="w-4 h-4 text-gray-500 mr-2" />
               <div>
                 <p className="text-xs font-medium text-gray-600">Total Payment</p>
-                <p className="text-sm text-gray-800">${totalPayment.toFixed(2)}</p>
+                <p className="text-sm text-gray-800">₹{totalPayment.toFixed(2)}</p>
               </div>
             </div>
             <div className="flex items-center">
@@ -96,7 +97,7 @@ export default function BookingHistoryPage() {
 
   return (
     <>
-    <Navbar/>
+    <Navbar2/>
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl mt-10 font-bold mb-6">Your Booking History</h1>
       <div className="space-y-8">
@@ -106,6 +107,5 @@ export default function BookingHistoryPage() {
       </div>
     </div>
     </>
-    
   )
 }

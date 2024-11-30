@@ -13,7 +13,7 @@ export default function ForgotPassword() {
     async function handleSubmit(e) {
         e.preventDefault();
         try {
-            const response = await fetch('/api/v1/forgot-password', {
+            const response = await fetch('http://localhost:8000/api/v1/user/forgot-password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
