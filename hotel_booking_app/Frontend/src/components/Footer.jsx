@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiHome } from 'react-icons/fi';
-import FooterBg from './footer-bg.jpg';
+import FooterBg from '../assets/footer-bg.jpg';
 
 function Footer() {
   return (

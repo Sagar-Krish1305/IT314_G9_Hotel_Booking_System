@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import Cookies from 'js-cookie';
-import immm from "./s.png";
+import immm from '../assets/s.png';
 import Navbar from "./Navbar";
 
 export default function Login() {
