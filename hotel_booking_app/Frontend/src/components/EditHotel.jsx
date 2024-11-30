@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import HotelField from './Hotel_Field';
+import HotelField from './HotelField';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 

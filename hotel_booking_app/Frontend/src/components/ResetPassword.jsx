@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
-import immm from "./s.png"
+import immm from '../assets/s.png';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('');

@@ -1,6 +1,6 @@
 import React from 'react';
 // import AboutUsBg from './s.png';
-import groupPhoto from './s.png';
+import groupPhoto from '../assets/s.png';
 
 function AboutUs() {
   return (

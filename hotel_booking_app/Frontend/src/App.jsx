@@ -9,7 +9,6 @@ import Login from "./components/Login";
 import  ForgotPassword  from './components/Forgot_Password';
 import  ResetPassword  from './components/ResetPassword';
 import Profile from './components/Profile';
-import './App.css';
 import Home from './components/Home';
 import { PhilippinePeso } from 'lucide-react';
 import Cookies from 'js-cookie';

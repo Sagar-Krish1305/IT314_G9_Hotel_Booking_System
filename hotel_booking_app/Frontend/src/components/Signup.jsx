@@ -3,7 +3,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { FaPhone } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import immm from "./s.png";
+import immm from '../assets/s.png';
 
 export default function Signup() {
   const [showCreatePass, setShowCreatePass] = useState(false);
