@@ -23,12 +23,11 @@ const forgotPassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
     // Generate a password reset token using JWT
     const resetToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
 
     // Send password reset email
-    const resetUrl = `http://localhost:3001/reset-password/${resetToken}`;
+    const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
     const mailOptions = {
       to: user.e_mail,
       from: 'shyamdummy10@gmail.com',
@@ -58,7 +57,7 @@ const resetPassword = async (req, res) => {
 
     // Verify the token
     const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await message.findById(decoded.userId);
+    const user = await User.findById(decoded.userId);
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid or expired reset token' });

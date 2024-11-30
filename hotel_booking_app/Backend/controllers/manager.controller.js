@@ -12,10 +12,6 @@ const JWT_SECRET = 'your-secret-key';
 
 const managerLogin = asyncHandler(async (req, res) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json(new ApiResponse(400, { errors: errors.array() }, "Validation Error"));
-    }
 
     try {
         const { email, password } = req.body;
@@ -85,7 +81,7 @@ const editHotelDetails = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Couldn't update hotel details");
     }
 
-    res.status(200).json(new ApiResponse(200, { hotel: updatedHotel }, "Hotel details updated successfully"));
+    res.status(200).json(new ApiResponse(200, { success : true, hotel: updatedHotel }, "Hotel details updated successfully"));
 });
 
 const hotelDetails = asyncHandler(async (req, res) => {
@@ -146,4 +142,4 @@ const getBookings = asyncHandler(async (req, res) => {
 
 });
 
-export { editHotelDetails, hotelDetails, getBookings };
+export { managerLogin, editHotelDetails, hotelDetails, getBookings };

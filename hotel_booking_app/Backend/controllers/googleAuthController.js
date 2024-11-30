@@ -8,7 +8,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const JWT_SECRET = process.env.JWT_SECRET; // Make sure this is set in your environment variables
 
 const googleSignIn = async (req, res) => {
-  const { token } = req.body;
+  const token = req.body.token;
   try {
     const ticket = await client.verifyIdToken({
       idToken: token,
@@ -30,9 +30,9 @@ const googleSignIn = async (req, res) => {
 
     // If the user exists, generate JWT token
     const jwtToken = jwt.sign(
-      { userId: user._id, email: user.e_mail, userType: user.user_type },
+      { userId: user._id, email: user.e_mail, userType: user.user_type , mobileNumber:user.mobile_number , firstName:user.first_name , lastName:user.last_name},
       JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '7d' }
     );
 
     res.status(200).json({

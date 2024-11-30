@@ -161,7 +161,7 @@ const handleSearchRequest = asyncHandler(async (req, res) => {
     }
 
     for (const hotel of hotelsInCity) {
-        const { address, description, type, roomCount, facilities, contactNo, email, ...hotelData } = hotel.toObject();
+        const { description, type, roomCount, contactNo, email, ...hotelData } = hotel.toObject();
         availableHotels.push({ hotelData });
     }
 
@@ -174,9 +174,11 @@ const handleSearchRequest = asyncHandler(async (req, res) => {
 })
 
 
-const getDetailsOfHotel = asyncHandler(async (req, res) => {
+const getDetailsOfHotel = asyncHandler(async(req,res)=>{
+    const hotelId = req.params.hotelId;
 
-    const hotelId = req.params.hotelId.slice(1);
+    // console.log(hotelId);
+
     const hotel = await HotelDetails.findById(hotelId).select("-password")
         .populate({
             path: "ratings",
@@ -185,22 +187,28 @@ const getDetailsOfHotel = asyncHandler(async (req, res) => {
                 select: "first_name last_name",
             },
         });
+
+    // console.log(hotel);
     if (!hotel) {
         throw new ApiError(400, "Hotel not found");
     }
 
-    //if there is no rating for hotel
-    if (hotel.ratings.length === 0 || !hotel.ratings) {
-        return res
-            .status(200)
-            .json(new ApiResponse(200, hotel, "No ratings found for this hotel"));
-    }
+    // //if there is no rating for hotel
+    // if (hotel.ratings.length === 0 || !hotel.ratings) {
+    //     return res
+    //         .status(200)
+    //         .json(new ApiResponse(200, [], "No ratings found for this hotel"));
+    // }
+
+
 
     let averageOverallRatings = 0,
         averageServiceRatings = 0,
         averageRoomsRatings = 0,
         averageCleanlinessRatings = 0,
         averageFoodRatings = 0;
+
+    if(hotel.ratings.length !== 0){
 
     hotel.ratings.forEach((rating) => {
         averageOverallRatings += rating.overallRating;
@@ -209,42 +217,52 @@ const getDetailsOfHotel = asyncHandler(async (req, res) => {
         averageCleanlinessRatings += rating.cleanlinessRating;
         averageFoodRatings += rating.foodRating;
     });
-
+}
+    
     const totalRatings = hotel.ratings.length;
-    const allAverageRatings = {
+    let allAverageRatings = {};
+    if(totalRatings !== 0){
+     allAverageRatings = {
         averageOverallRatings: Number(averageOverallRatings / totalRatings).toFixed(2),
         averageServiceRatings: Number(averageServiceRatings / totalRatings).toFixed(2),
         averageRoomsRatings: Number(averageRoomsRatings / totalRatings).toFixed(2),
         averageCleanlinessRatings: Number(averageCleanlinessRatings / totalRatings).toFixed(2),
         averageFoodRatings: Number(averageFoodRatings / totalRatings).toFixed(2)
     };
+}
+else{
+    allAverageRatings = {
+        averageOverallRatings: 0,
+        averageServiceRatings: 0,
+        averageRoomsRatings: 0,
+        averageCleanlinessRatings: 0,
+        averageFoodRatings: 0
+    };
+}
 
     //now user wise ratings with user's name, reviewDescription and reviewImages
-
+    console.log("2");
     let userWiseRatings = [];
     hotel.ratings.forEach((rating) => {
-        const { userId, reviewTitle, reviewDescription, overallRating, reviewImages } = rating;
+        const { userId, reviewTitle, reviewDescription, overallRating, serviceRating, roomsRating, cleanlinessRating, foodRating, reviewImages } = rating;
         userWiseRatings.push({
             userName: `${userId.first_name} ${userId.last_name}`,
             reviewTitle,
             reviewDescription,
             overallRating,
-            reviewImages
+            reviewImages,
+            serviceRating,
+            roomsRating,
+            cleanlinessRating,
+            foodRating
         });
     });
 
     // return object with allAverageRatings and userWiseRatings
+    // console.log(hotel, allAverageRatings, userWiseRatings);
     return res
         .status(200)
-        .json(new ApiResponse(200, { hotel, allAverageRatings, userWiseRatings }, "Hotel ratings and other data retrieved successfully"));
-
-    // return res
-    //     .status(200)
-    //     .json(new ApiResponse(200, allAverageRatigs, "Hotel ratings retrieved successfully"));
-
-    return res
-        .status(200)
-        .json(200, hotel, "Hotel Details return successfully");
+        .json(new ApiResponse(200, { hotel, allAverageRatings, userWiseRatings }, "Hotel ratings retrieved successfully"));
 })
 
 

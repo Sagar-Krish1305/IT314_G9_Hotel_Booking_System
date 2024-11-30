@@ -8,27 +8,28 @@ import { Rating } from "../models/rating.model.js";
 import { User } from "../models/user.model.js";
 import { BookingDetails } from "../models/booking.model.js";
 import { HotelDetails } from "../models/hotel.model.js";
-import { validationResult } from "express-validator";
 
 
 const handleAddRatings = asyncHandler(async (req, res) => {
 
     // console.log(req.body);
     const {
-        overallRating,
-        reviewTitle,
-        reviewDescription,
-        serviceRating,
-        roomsRating,
-        cleanlinessRating,
-        foodRating
+        rating,
+        title,
+        details,
+        service,
+        rooms,
+        cleanliness,
+        food
     } = req.body;
 
     const hotelId = req.params.hotelId;
-    const userId = req.user?._id;
+
+    const userId = req.user.userId;
+
 
     //check all fields  
-    if (!overallRating || !reviewTitle || !reviewDescription || !serviceRating || !roomsRating || !cleanlinessRating || !foodRating) {
+    if (!rating || !title || !details || !service || !rooms || !cleanliness || !food) {
         throw new ApiError(400, "All fields are required.");
     }
 
@@ -67,14 +68,13 @@ const handleAddRatings = asyncHandler(async (req, res) => {
         const newRating = await Rating.create({
             hotelId,
             userId,
-            overallRating,
-            reviewTitle,
-            reviewDescription,
-            serviceRating,
-            roomsRating,
-            cleanlinessRating,
-            foodRating,
-            reviewImages: imageUrls
+            overallRating : rating,
+            reviewTitle : title,
+            reviewDescription : details,
+            serviceRating : service,
+            roomsRating : rooms,
+            cleanlinessRating : cleanliness,
+            foodRating : food
         });
 
         hotel.ratings.push(newRating._id);
@@ -91,32 +91,36 @@ const handleAddRatings = asyncHandler(async (req, res) => {
 
 const handlegetPreviousBookings = asyncHandler(async (req, res) => {
     // const userId = req.user._id;
-    const userId = req.body.userId;
+    const userId = req.user.userId;
     try {
         // console.log(userId);
         const previousBookings = await BookingDetails.find({ userId });
 
-        // console.log(previousBookings);
+
 
         let bookedHotels = [];
         for (const previousBooking of previousBookings) {
             const hotelId = previousBooking.hotelId;
 
             // fetching require fields
-            const hotel = await HotelDetails.findById(hotelId).select("hotelName city");
-            const booking = await BookingDetails.findById(previousBooking._id).select("checkInDate checkOutDate roomCount totalCost");
-
+            const hotel = await HotelDetails.findById(hotelId).select("-password");
+            const booking = await BookingDetails.findById(previousBooking._id);
+            //console.log(hotel, booking);
             if (hotel && booking) {
                 const bookedHotel = {
                     hotelName: hotel.hotelName,
                     checkInDate: booking.checkInDate,
                     checkOutDate: booking.checkOutDate,
-                    city: hotel.city,
-                    bookedRooms: booking.roomCount,
-                    totalCost: booking.totalCost,
+                    firstName : booking.firstName,
+                    lastName : booking.lastName,
+                    pricePerNight : hotel.pricePerNight,
+                    roomsBooked: booking.roomCount,
+                    totalPayment: booking.totalCost,
+                    email : booking.email,
+                    hotelPhotoUrl: hotel.images[0]
                 };
 
-                // console.log(bookedHotel);
+
                 bookedHotels.push(bookedHotel);
             }
         };

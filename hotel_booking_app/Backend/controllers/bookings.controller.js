@@ -19,7 +19,7 @@ const handleBookingRequest = asyncHandler(async (req, res) => {
     const { firstName, lastName, email, checkInDate, checkOutDate, phone, roomCount, totalCost } = req.body;
     
     // console.log(req.body);
-    const userId = req.user?._id;
+    const userId = req.user?.userId;
     // const userId = "673724f88f99e1e032f07dbc";
     const hotelId = req.params.hotelId;
     // const userId = Math.random().toString(36).substring(2, 12);

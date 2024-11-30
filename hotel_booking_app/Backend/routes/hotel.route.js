@@ -1,7 +1,7 @@
 // All routers code should be update here
 
 // import { Router } from "express";
-import { getDetailsOfHotel, handleSearchRequest, RegisterHotel, handleAddReviewRequest } from "../controllers/hotels.controller.js";
+import { getDetailsOfHotel, handleSearchRequest, RegisterHotel } from "../controllers/hotels.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { handleAddRatings } from "../controllers/user.controller.js";
 
@@ -14,6 +14,7 @@ import { newmessage } from '../controllers/registerhandle.js';
 const router = express.Router();
 
 import { handlBookingcancellation, handleBookingRequest } from "../controllers/bookings.controller.js"
+import authMiddleware from "../middlewares/authMiddleware.js";
 
 
 router.post("/createmessage", newmessage);
@@ -77,23 +78,16 @@ router.route("/hotelRegister").post(
 
 router.get("/:hotelId", getDetailsOfHotel);
 
-router.route("/:hotelId/addRatings").post(
-    upload.fields([
-        {
-            name: "images",
-            maxCount: 5
-        }
-    ]),
+router.post("/:hotelId/addRatings",
+    authMiddleware,
     handleAddRatings
 );
 
 
 router.post("/search", handleSearchRequest);
 
-router.post("/:hotelId/confirm-booking", handleBookingRequest);
+router.post("/:hotelId/confirm-booking", authMiddleware, handleBookingRequest);
 
 router.delete("/:bookingId", handlBookingcancellation);
-// router.get("/:hotelId/rating-and-reviews", handleGetReviewRequest);
-router.post("/:hotelId/write-a-review", handleAddReviewRequest);
 
 export default router
