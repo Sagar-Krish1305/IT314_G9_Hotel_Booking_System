@@ -20,6 +20,7 @@ import BookingPage from './components/BookingPage';
 import ManagerHotel from './components/ManagerHotel';
 import HotelForm from './components/EditHotel';
 import AboutUs from './components/About';
+import config from './config';
 // import PPP from './components/PPP';
 
 export default function Component() {
@@ -30,7 +31,7 @@ export default function Component() {
         const token = Cookies.get('token');
         if (token) {
             // Verify token and set user
-            fetch('http://localhost:8000/api/v1/user/verify-token', {
+            fetch(`${config.BACKEND_ID}/api/v1/user/verify-token`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

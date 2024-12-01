@@ -27,7 +27,7 @@ const forgotPassword = async (req, res) => {
     const resetToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
 
     // Send password reset email
-    const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+    const resetUrl = `https://stayeazy.vercel.app/reset-password/${resetToken}`;
     const mailOptions = {
       to: user.e_mail,
       from: 'shyamdummy10@gmail.com',
