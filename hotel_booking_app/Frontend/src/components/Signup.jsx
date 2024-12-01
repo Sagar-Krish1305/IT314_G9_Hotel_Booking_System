@@ -4,6 +4,7 @@ import { FaPhone } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import immm from '../assets/s.png';
+import config from "../config";
 
 export default function Signup() {
   const [showCreatePass, setShowCreatePass] = useState(false);

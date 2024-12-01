@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { FaEnvelope } from 'react-icons/fa';
 import immm from "../assets/s.png"
+import config from '../config';
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
