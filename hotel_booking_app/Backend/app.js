@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 const app = express();
 
 app.use(cors({
-    origin: 'https://stayeazy.vercel.app/home',  // Specify the origin
+    origin: 'https://stayeazy.vercel.app',  // Specify the origin
     credentials: true                // Allow credentials
   }));
 
