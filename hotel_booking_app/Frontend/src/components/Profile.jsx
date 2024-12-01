@@ -31,7 +31,7 @@ export default function Profile() {
         const data = await response.json()
         // setHotelData(data);
         console.log(data.data);
-        navigate('/BookingHistory' , {state: {dataa:data.data}});
+        navigate('/BookingHistory', { state: { dataa: data.data } });
       } else {
         console.error('Failed to fetch hotel data')
         toast.error('Failed to fetch hotel data')
@@ -118,19 +118,19 @@ export default function Profile() {
             </div>
           </div>
           <div className="flex space-x-4">
-            <button 
+            <button
               className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
-              onClick={() => navigate('/home')}
+              onClick={() => navigate('/')}
             >
               Return to Home
             </button>
-            <button 
+            <button
               className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
               onClick={isEditing ? handleUpdateProfile : () => setIsEditing(true)}
             >
               {isEditing ? 'Update Profile' : 'Edit Profile'}
             </button>
-            <button 
+            <button
               className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
               onClick={gethoteldata}
             >
