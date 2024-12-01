@@ -47,7 +47,7 @@ export default function Login() {
     const { email, hotelId, password, userType } = formData;
     try {
       const endpoint = userType === "customer" ? `${config.BACKEND_ID}/api/v1/user/createlogin` : `${config.BACKEND_ID}/api/v1/manager/login`;
-      const payload = userType === "customer" ? { email, password } : { email:hotelId, password };
+      const payload = userType === "customer" ? { email, password } : { email: hotelId, password };
       console.log(endpoint);
       const res = await fetch(endpoint, {
         method: "POST",
@@ -60,14 +60,14 @@ export default function Login() {
       if (res.status === 200 && data.success) {
         toast.success("Login Successful");
         Cookies.set("token", data.token, { expires: 7 });
-        
+
         if (userType === "customer") {
           Cookies.set("firstname", data.user.firstName, { expires: 7 });
           Cookies.set("lastname", data.user.lastName, { expires: 7 });
           Cookies.set("email", data.user.email, { expires: 7 });
           Cookies.set("mobileno", data.user.mobileNumber, { expires: 7 });
           setUser(data.user);
-          navigate("/home");
+          navigate("/");
         } else {
           Cookies.set("hotelId", data.hotel.id, { expires: 7 });
           setUser(data.user);
@@ -140,7 +140,7 @@ export default function Login() {
         Cookies.set("email", data.user.email, { expires: 7 });
         Cookies.set("mobileno", data.user.mobileNumber, { expires: 7 });
         setUser(data.user);
-        navigate("/home");
+        navigate("/");
       } else {
         toast.error(data.message || "Google Sign-In failed");
       }
@@ -152,168 +152,166 @@ export default function Login() {
 
   return (
     <>
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden">
-        <div className="flex flex-col md:flex-row">
-          <div className="md:w-1/2 bg-gradient-to-br from-blue-500 to-blue-700 p-12 text-white flex flex-col justify-center items-center">
-            <img
-              src={immm}
-              alt="Login illustration"
-              className="mb-8 rounded-2xl h-[300]"
-            />
-            <h2 className="text-3xl font-bold mb-4">Welcome Back</h2>
-            <p className="text-blue-100 text-center">Sign in to access your account and enjoy our services</p>
-          </div>
-          
-          <div className="md:w-1/2 p-12">
-            <div className="max-w-sm mx-auto">
-              <h3 className="text-2xl font-semibold text-gray-800 mb-6">Sign In</h3>
-              
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Sign in as
-                  </label>
-                  <div className="flex space-x-4">
-                    {["customer", "manager"].map((type) => (
-                      <button
-                        key={type}
-                        type="button"
-                        onClick={() => setFormData((prev) => ({ ...prev, userType: type }))}
-                        className={`flex-1 py-2 px-4 text-sm rounded-md transition-colors duration-300 ${
-                          formData.userType === type
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        }`}
-                      >
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden">
+          <div className="flex flex-col md:flex-row">
+            <div className="md:w-1/2 bg-gradient-to-br from-blue-500 to-blue-700 p-12 text-white flex flex-col justify-center items-center">
+              <img
+                src={immm}
+                alt="Login illustration"
+                className="mb-8 rounded-2xl h-[300]"
+              />
+              <h2 className="text-3xl font-bold mb-4">Welcome Back</h2>
+              <p className="text-blue-100 text-center">Sign in to access your account and enjoy our services</p>
+            </div>
 
-                {formData.userType === "customer" ? (
+            <div className="md:w-1/2 p-12">
+              <div className="max-w-sm mx-auto">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-6">Sign In</h3>
+
+                <form onSubmit={handleLogin} className="space-y-4">
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Email Address
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Sign in as
                     </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      placeholder="Enter your email address"
-                      value={formData.email}
-                      onChange={changeHandler}
-                      className={`w-full px-4 py-2 rounded-lg border ${
-                        emailError ? "border-red-500" : "border-gray-300"
-                      } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    />
-                    {emailError && <span className="text-red-500 text-sm">Email is not valid</span>}
+                    <div className="flex space-x-4">
+                      {["customer", "manager"].map((type) => (
+                        <button
+                          key={type}
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, userType: type }))}
+                          className={`flex-1 py-2 px-4 text-sm rounded-md transition-colors duration-300 ${formData.userType === type
+                              ? "bg-blue-600 text-white"
+                              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                            }`}
+                        >
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                ) : (
-                  <div>
-                    <label htmlFor="hotelId" className="block text-sm font-medium text-gray-700 mb-1">
-                      Hotel ID
+
+                  {formData.userType === "customer" ? (
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        placeholder="Enter your email address"
+                        value={formData.email}
+                        onChange={changeHandler}
+                        className={`w-full px-4 py-2 rounded-lg border ${emailError ? "border-red-500" : "border-gray-300"
+                          } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                      />
+                      {emailError && <span className="text-red-500 text-sm">Email is not valid</span>}
+                    </div>
+                  ) : (
+                    <div>
+                      <label htmlFor="hotelId" className="block text-sm font-medium text-gray-700 mb-1">
+                        Hotel ID
+                      </label>
+                      <input
+                        type="text"
+                        id="hotelId"
+                        name="hotelId"
+                        required
+                        placeholder="Enter your hotel ID"
+                        value={formData.hotelId}
+                        onChange={changeHandler}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  )}
+
+                  <div className="relative">
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                      Password
                     </label>
                     <input
-                      type="text"
-                      id="hotelId"
-                      name="hotelId"
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      name="password"
                       required
-                      placeholder="Enter your hotel ID"
-                      value={formData.hotelId}
+                      placeholder="Enter your password"
+                      value={formData.password}
                       onChange={changeHandler}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-8 text-gray-400"
+                    >
+                      {showPassword ? (
+                        <AiOutlineEyeInvisible className="text-2xl" />
+                      ) : (
+                        <AiOutlineEye className="text-2xl" />
+                      )}
+                    </button>
                   </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <input
+                        id="remember-me"
+                        name="remember-me"
+                        type="checkbox"
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                        Remember me
+                      </label>
+                    </div>
+                    <div className="text-sm">
+                      <a href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
+                        Forgot your password?
+                      </a>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white rounded-lg py-2.5 font-medium hover:bg-blue-700 transition-colors duration-200"
+                  >
+                    Sign In
+                  </button>
+                </form>
+
+                {formData.userType === "customer" && (
+                  <>
+                    <div className="mt-6">
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                          <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                        </div>
+                      </div>
+
+                      <div className="mt-6">
+                        <div id="googleSignInDiv" className="flex justify-center"></div>
+                      </div>
+                    </div>
+
+                  </>
                 )}
 
-                <div className="relative">
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                    Password
-                  </label>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    name="password"
-                    required
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={changeHandler}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-8 text-gray-400"
-                  >
-                    {showPassword ? (
-                      <AiOutlineEyeInvisible className="text-2xl" />
-                    ) : (
-                      <AiOutlineEye className="text-2xl" />
-                    )}
-                  </button>
+                <div className="mt-6 text-center text-sm">
+                  <span className="text-gray-600">Don't have an account? </span>
+                  <a href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
+                    Sign up
+                  </a>
                 </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <input
-                      id="remember-me"
-                      name="remember-me"
-                      type="checkbox"
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                      Remember me
-                    </label>
-                  </div>
-                  <div className="text-sm">
-                    <a href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
-                      Forgot your password?
-                    </a>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white rounded-lg py-2.5 font-medium hover:bg-blue-700 transition-colors duration-200"
-                >
-                  Sign In
-                </button>
-              </form>
-              
-              {formData.userType === "customer" && (
-                <>
-                  <div className="mt-6">
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-300"></div>
-                      </div>
-                      <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white text-gray-500">Or continue with</span>
-                      </div>
-                    </div>
-
-                    <div className="mt-6">
-                      <div id="googleSignInDiv" className="flex justify-center"></div>
-                    </div>
-                  </div>
-                  
-                </>
-              )}
-
-              <div className="mt-6 text-center text-sm">
-                <span className="text-gray-600">Don't have an account? </span>
-                <a href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
-                   Sign up
-                </a>
-           </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 }
