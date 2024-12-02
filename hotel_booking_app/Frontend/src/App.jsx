@@ -18,7 +18,7 @@ import HotelDetailPage from './components/HotelDetailPage';
 import ReviewForm from './components/ReviewForm';
 import BookingPage from './components/BookingPage';
 import ManagerHotel from './components/ManagerHotel';
-import HotelForm from './components/EditHotel';
+import HotelForm from './components/HotelForm';
 import AboutUs from './components/About';
 import config from './config';
 // import PPP from './components/PPP';
