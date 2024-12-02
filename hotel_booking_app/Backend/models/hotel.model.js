@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-
+import bcrypt from "bcryptjs"
 const hotelPoliciesSchema = new Schema({
     checkInTime: {
         type: String,
@@ -68,13 +68,6 @@ const hotelDetailsSchema = new Schema({
         type: String,
         trim: true
     },
-
-    type: {
-        type: [String],
-        //enum: ['luxury', '4star', 'normal'],
-        default: []
-    },
-
 
     roomCount: {
         type: Number,

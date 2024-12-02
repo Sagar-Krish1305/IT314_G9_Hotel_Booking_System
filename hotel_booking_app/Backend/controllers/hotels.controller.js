@@ -22,7 +22,7 @@ const RegisterHotel = asyncHandler(async (req, res) => {
     // return response
 
     const { hotelName, city, country, address, description,
-        roomCount, pricePerNight, contactNo, email, type, facilities, password } = req.body
+        roomCount, pricePerNight, contactNo, email, facilities, password } = req.body
 
     if (
         [hotelName, city, country, address, description,
@@ -66,7 +66,6 @@ const RegisterHotel = asyncHandler(async (req, res) => {
         address,
         description,
         roomCount,
-        type,
         facilities: facilitiesArray,
         pricePerNight,
         contactNo,
