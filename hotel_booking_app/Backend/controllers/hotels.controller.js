@@ -10,6 +10,28 @@ import { validationResult } from "express-validator";
 import { Rating } from "../models/rating.model.js";
 
 
+const getRandomHotels = async (req, res) => {
+    try {
+      // Fetch 8 random hotels using MongoDB
+      const randomHotels = await HotelDetails.aggregate([
+        { $sample: { size: 8 } } // Randomly select 8 hotels
+      ]);
+  
+      // Send the response
+      res.status(200).json({
+        success: true,
+        data: randomHotels
+      });
+    } catch (error) {
+      // Handle any errors
+      res.status(500).json({
+        success: false,
+        message: "An error occurred while fetching random hotels",
+        error: error.message
+      });
+    }
+  };
+
 const RegisterHotel = asyncHandler(async (req, res) => {
     // data from body
     // validation
@@ -55,9 +77,8 @@ const RegisterHotel = asyncHandler(async (req, res) => {
             imageUrls.push(uploadurl.url)
         }
     }
-    let facilitiesArray = [];
-    if (facilities.length > 0)
-        facilitiesArray = facilities.split(",");
+    
+    let facilitiesArray = JSON.parse(facilities);
 
     const hotel = await HotelDetails.create({
         hotelName,
@@ -268,5 +289,6 @@ else{
 export {
     RegisterHotel,
     handleSearchRequest,
-    getDetailsOfHotel
+    getDetailsOfHotel,
+    getRandomHotels
 }
