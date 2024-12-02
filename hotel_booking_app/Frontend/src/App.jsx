@@ -18,9 +18,10 @@ import HotelDetailPage from './components/HotelDetailPage';
 import ReviewForm from './components/ReviewForm';
 import BookingPage from './components/BookingPage';
 import ManagerHotel from './components/ManagerHotel';
-import HotelForm from './components/HotelForm';
 import AboutUs from './components/About';
 import config from './config';
+import HotelForm2 from './components/HotelForm';
+import HotelForm from './components/EditHotel';
 // import PPP from './components/PPP';
 
 export default function Component() {
@@ -77,7 +78,8 @@ export default function Component() {
                     <Route path="/review/:id" element={<ReviewForm />} />
                     <Route path="/booking/:id" element={<BookingPage />} />
                     <Route path="/manager/hotel" element={<ManagerHotel />} />
-                    <Route path="/manager/addhotel" element={<HotelForm />} />
+                    <Route path="/hotel/addhotel" element={<HotelForm2 />} />
+                    <Route path="/manager/addhotel" element={<HotelForm/>}/>
                     {/* <Route path="/ppp" element={<PPP />} /> */}
                     <Route
                         path="/profile"

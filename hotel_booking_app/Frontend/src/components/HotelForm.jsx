@@ -29,7 +29,7 @@ const HotelField = ({ label, name, value, onChange, type = 'text', required = fa
   </div>
 );
 
-const HotelForm = () => {
+const HotelForm2 = () => {
   const [hotelData, setHotelData] = useState({
     hotelName: '',
     city: '',
@@ -197,4 +197,4 @@ const HotelForm = () => {
   );
 };
 
-export default HotelForm;
+export default HotelForm2;
