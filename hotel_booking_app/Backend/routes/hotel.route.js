@@ -65,6 +65,8 @@ router.get('/api/v1/verify-token', (req, res) => {
 //     RegisterHotel
 // )
 
+router.get("/getRandomHotels",getRandomHotels);
+
 router.route("/hotelRegister").post(
     upload.fields([
         {

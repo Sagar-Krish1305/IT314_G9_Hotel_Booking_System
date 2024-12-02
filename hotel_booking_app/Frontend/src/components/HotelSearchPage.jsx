@@ -11,11 +11,12 @@ import Navbar2 from "./Navbar_2";
 import config from "../config";
 // import { Star, ChevronLeft, ChevronRight, MapPin, ArrowRight } from 'lucide-react'
 // import { HotelDetailPage } from "./HotelDetailPage";
+import { FaRupeeSign } from "react-icons/fa";
 
 const Header = () => (
-  <header className="fixed top-0 left-0 right-0 bg-white z-10 shadow-md">
+  <header className=" fixed top-0 left-0 right-0 bg-white z-10 shadow-md">
     <div className="container mx-auto flex justify-between items-center py-4 px-6">
-      <h1 className="text-lg font-semibold text-blue-500">StayEasy</h1>
+      <h1 className=" text-lg font-semibold text-blue-500">StayEasy</h1>
       <div className="flex gap-4">
   
         <button className="text-sm text-gray-600">Sign in</button>
@@ -60,6 +61,7 @@ const SearchBar = ({ onSearch ,dataa}) => {
             id="checkIn"
             type="date"
             value={checkIn}
+            min={new Date().toISOString().split("T")[0]}
             onChange={(e) => setCheckIn(e.target.value)}
             className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -74,26 +76,42 @@ const SearchBar = ({ onSearch ,dataa}) => {
             type="date"
             value={checkOut}
             onChange={(e) => setCheckOut(e.target.value)}
+            min={
+              checkIn 
+                ? new Date(new Date(checkIn).setDate(new Date(checkIn).getDate() + 1))
+                    .toISOString()
+                    .split("T")[0]
+                : new Date().toISOString().split("T")[0]
+            }
             className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
-      <div className="flex-1 min-w-[200px]">
-        <label htmlFor="guests" className="sr-only">Guests</label>
-        <div className="relative">
-          <Users className="absolute left-3 top-3 text-gray-400" />
-          <select
-            id="guests"
-            value={guests}
-            onChange={(e) => setGuests(Number(e.target.value))}
-            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-          >
-            {[1, 2, 3, 4, 5].map(num => (
-              <option key={num} value={num}>{num} Guest{num > 1 ? 's' : ''}</option>
-            ))}
-          </select>
-        </div>
-      </div>
+
+
+                    {/* Guests Counter */}
+                    <div className="flex-1 min-w-[150px]">
+                <label htmlFor="guests" className="sr-only">Guests</label>
+                <div className="relative flex items-center border border-gray-300 rounded py-2 px-3">
+                  <Users className="text-gray-400 mr-2" />
+                  <button
+                    type="button"
+                    onClick={() => setGuests((prev) => Math.max(1, prev - 1))}
+                    className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                  >
+                    -
+                  </button>
+                  <span className="mx-4 text-md font-medium">{guests} Room{guests > 1 ? 's' : ''}</span>
+                  <button
+                    type="button"
+                    onClick={() => setGuests((prev) => ( prev + 1))}
+                    className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
       <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">
         <Search className="inline-block mr-2" />
         Search
@@ -104,197 +122,6 @@ const SearchBar = ({ onSearch ,dataa}) => {
 
 
 
-
-// const HotelDetailPage = ({ hotel, onBack ,rev}) => {
-//   const [roomDetails, setRoomDetails] = useState({
-//     checkIn: '',
-//     checkOut: '',
-//     guests: 1,
-//     x: 1,
-//     totalPrice: 0,
-//   })
-
-//   const [adults, setAdults] = useState(1);
-
-//   const navigate = useNavigate();
-//   const handleReview = () =>{
-//       navigate("/review");
-//   }
-
-//   const handleIncrement = () => {
-//     if (adults < 20) setAdults(adults + 1); // Limit to a maximum of 4
-//   };
-
-//   const handleDecrement = () => {
-//     if (adults > 1) setAdults(adults - 1); // Limit to a minimum of 1
-//   };
-
-//   const facilityIcons = {
-//     "Free Wifi": "📶",
-//     "AC": "❄",
-//     "TV": "📺",
-//     "Power backup": "🔋",
-//     "Elevator": "🛗",
-//     "Heater": "🔥",
-//     "Parking": "🚗",
-//     "CCTV": "📹"
-//   };
-//   useEffect(() => {
-//     window.scrollTo(0, 0)
-//   }, [])
-
-//   return (
-//     <div className="min-h-screen bg-gray-100">
-//       <Header />
-//       <div className="container mx-auto p-4 pt-20">
-//         <button onClick={onBack} className="mb-4 text-blue-500 hover:underline">&larr; Back to Search</button>
-//         <div className="relative w-full h-[35rem] mb-8">
-//           <img
-//             src={hotel.images[0]}
-//             alt={hotel.hotelName}
-//             className="w-full h-full object-cover rounded-lg"
-//           />
-//         </div>
-//         <div className="flex flex-col lg:flex-row mt-8 space-y-8 lg:space-y-0 lg:space-x-8">
-//           <div className="w-full lg:w-2/3">
-//             <h2 className="text-3xl font-semibold mb-6">Overview</h2>
-//             <h3 className="text-2xl font-semibold mb-4">{hotel.hotelName}</h3>
-//             <p className="text-gray-600 mb-4">
-//               {hotel.description}
-//             </p>
-//             <div className="mb-12">
-//               <h2 className="text-3xl font-semibold mb-6">Amenities</h2>
-//               <div className="grid grid-cols-2 gap-6">
-
-//               {
-//                 hotel.facilities.map((facility, index) => (
-//                   <div className="flex items-center" key={index}>
-//                     <span className="mr-3 text-blue-500 text-4xl">
-//                       {facilityIcons[facility] } {/* Fallback to a default icon if not found */}
-//                     </span>
-//                     <span>{facility}</span>
-//                   </div>
-//                 ))
-//               }
-//               </div>
-//             </div>
-//             <div className="mb-12">
-//               <h2 className="text-3xl font-semibold mb-6">Contact us</h2>
-//               <div className="grid grid-cols-2 gap-6">
-
-//               {
-//                <span className="mr-3 text-blue-500">
-//                <Mail className="inline-block mr-2" />
-//                {hotel.email}{/* Fallback to a default icon if not found */}
-//                 </span>
-
-             
-//               }
-
-//                  {
-//                <span className="mr-3 text-blue-500">
-//                <Phone className="inline-block mr-2" />
-//                {hotel.contactNo}{/* Fallback to a default icon if not found */}
-//                 </span>
-
-             
-//               }
-
-
-//               </div>
-//             </div>
-//             <div>
-              
-//             </div>
-//             <div className="mb-12">
-//               <h2 className=" flex text-3xl font-semibold mb-6">Reviews
-//                 <div className="ml-96 text-xl">
-//                 <button onClick={handleReview} className=" bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200  font-semibold">
-
-//                           Write a Review 
-
-//                           </button>
-//                </div>
-//               </h2>
-               
-//               {rev.map((r, index) => (
-//                   <div className="flex-col mt-3 rounded-sm">
-//                    <HotelReview key={index} review={r}/>  
-//                    </div>
-//                 ))
-//               }
-              
-//             </div>
-//           </div>
-//           <div className="w-full lg:w-1/3">
-//             <div className="sticky top-24">
-//               <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-//                 <h3 className="text-2xl font-semibold mb-6 text-blue-600">Book Your Stay</h3>
-                      
-                
-//                 <div className="space-y-4">
-
-//                 <div>
-//                     <label className="block text-sm font-medium text-gray-700 mb-1">Price Per Night :  ${hotel.pricePerNight}</label>
-                   
-//                   </div>
-
-
-//                   <div>
-//                     <label className="block text-sm font-medium text-gray-700 mb-1">Check-in</label>
-//                     <input 
-//                       type="date" 
-                      
-//                       min={new Date().toISOString().split("T")[0]} // Current date
-
-//                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
-//                     />
-//                   </div>
-                  
-//                   <div>
-//                     <label className="block text-sm font-medium text-gray-700 mb-1">Check-out</label>
-//                     <input 
-//                       type="date" 
-//                       min={new Date().toISOString().split("T")[0]} 
-//                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
-//                     />
-//                   </div>
-                  
-//                   <div>
-//                     <label className="block text-sm font-medium text-gray-700 mb-1">Rooms</label>
-//                     <div className="flex items-center w-full border border-gray-300 rounded-md px-3 py-2">
-//                       <button
-//                         onClick={handleDecrement}
-//                         className="px-2 py-1 text-gray-600 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-//                         disabled={adults === 1}
-//                       >
-//                         -
-//                       </button>
-//                       <span className="flex-1 text-center">{adults} Room{adults > 1 ? "s" : ""}</span>
-//                       <button
-//                         onClick={handleIncrement}
-//                         className="px-2 py-1 text-gray-600 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-//                         disabled={adults === 20}
-//                       >
-//                         +
-//                       </button>
-//                     </div>
-//                   </div>
-//                 </div>
-//                 <button  className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition duration-200 mt-6 font-semibold">
-//                   Book Now
-//                 </button>
-//                 <p className="text-sm text-gray-500 mt-4 text-center">
-//                   Best price guarantee. No booking fees.
-//                 </p>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
 
 export default function HotelSearchPage() {
   const [hotels, setHotels] = useState([])
@@ -403,7 +230,23 @@ export default function HotelSearchPage() {
       ) : ( */}
         <>
           <div className="container mx-auto pt-20">
+
+            <div className="flex justify-between">
             <h1 className="text-3xl font-bold mb-6">Find Your Perfect Stay</h1>
+            <div className="flex items-center space-x-2">
+              <label htmlFor="sort" className="text-gray-600 mb-2">Sort by:</label>
+              <select
+                id="sort"
+                //value={sortOption}
+                //onChange={handleSortChange}
+                className=" mb-2 border border-gray-300 rounded px-3 py-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select</option>
+                <option value="low-to-high">Price: Low to High</option>
+                <option value="high-to-low">Price: High to Low</option>
+              </select>
+            </div>
+            </div>
             <SearchBar onSearch={handleSearch} dataa={data}/>
             {loading && <div className="text-center">Loading...</div>}
             {error && <div className="text-center text-red-500">{error}</div>}
@@ -474,11 +317,11 @@ const HotelCard = ({ hotel, onClick }) => {
           <MapPin size={16} className="mr-1" />
           {hotel.address}
         </p>
-        <div className="flex justify-between items-center mb-4">
-          <p className="text-2xl font-bold text-blue-600">
-            ${hotel.pricePerNight}
+        <div className="flex  items-center mb-4 text-blue-700">
+          {/* <p className="text-2xl font-bold text-blue-600 flex"> */}
+                <FaRupeeSign classname="bg-blue-700"/> {hotel.pricePerNight}
             <span className="text-sm font-normal text-gray-600">/night</span>
-          </p>
+         {/* </p> */}
           {/* <div className="flex items-center bg-blue-100 px-2 py-1 rounded-full">
             <Star className="text-yellow-500 mr-1" size={16} />
             <span className="text-sm font-semibold text-blue-800">{hotel.ratings.toFixed(1)}</span>
