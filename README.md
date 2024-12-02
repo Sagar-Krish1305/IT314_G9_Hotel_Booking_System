@@ -114,7 +114,7 @@ http://localhost:3000
 Have questions or need support? Reach out to us:
 
 - **Email**: stayeazy_support@gmail.com
-- **Website**: [stayeazy.vercel.app](#)
+- **Website**: [stayeazy.vercel.app](https://stayeazy.vercel.app)
 
 We're excited to make your booking experience seamless and enjoyable. 🏖️
 
