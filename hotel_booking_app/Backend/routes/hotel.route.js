@@ -1,7 +1,7 @@
 // All routers code should be update here
 
 // import { Router } from "express";
-import { getDetailsOfHotel, handleSearchRequest, RegisterHotel } from "../controllers/hotels.controller.js";
+import { getDetailsOfHotel, handleSearchRequest, RegisterHotel, getRandomHotels } from "../controllers/hotels.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { handleAddRatings } from "../controllers/user.controller.js";
 
