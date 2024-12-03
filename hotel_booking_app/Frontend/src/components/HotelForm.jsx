@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import config from '../config';
+import { toast } from 'react-toastify';
 
 const HotelField = ({ label, name, value, onChange, type = 'text', required = false }) => (
   <div>
@@ -103,7 +104,7 @@ const HotelForm2 = () => {
       console.log(result);
 
       if (result.statusCode === 200) {
-        alert('Hotel added successfully!');
+        toast.success('Hotel Register successfully!');
         setHotelData({
           hotelName: '',
           city: '',
@@ -119,11 +120,11 @@ const HotelForm2 = () => {
           images: [],
         });
       } else {
-        alert(result.message || 'Failed to add hotel. Please check your input.');
+        toast.error('Failed to Register hotel');
       }
     } catch (error) {
       console.error('Error adding hotel:', error);
-      alert('Failed to add hotel. Please try again.');
+      toast.error('Failed to Register hotel');
     }
   };
 

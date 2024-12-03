@@ -6,12 +6,13 @@ import HotelReview from './HotelReview';
 import Cookies from "js-cookie"
 import { useLocation, useNavigate } from "react-router-dom";
 import { SiHotelsdotcom } from "react-icons/si";
+import { toast } from 'react-toastify';
 import config from "../config";
 // import { Navigate } from "react-router-dom";
 
 
 // const navigate = useNavigate();
-const Header = ({edit}) => (
+const Header = ({edit,getBooking,logo}) => (
     <header className="fixed top-0 left-0 right-0 bg-white z-10 shadow-md">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
         <div className="flex items-center space-x-2">
@@ -23,7 +24,8 @@ const Header = ({edit}) => (
         <div className="flex gap-4">
     
           <button type="button" onClick={edit} className="text-sm p-4 rounded-md bg-blue-500 text-white dark:md:hover:bg-blue-700">Edit hotel Details</button>
-
+          <button type="button" onClick={getBooking} className="text-sm p-4 rounded-md bg-blue-500 text-white dark:md:hover:bg-blue-700">Get Bookings</button>
+          <button type="button" onClick={logo} className="text-sm p-4 rounded-md bg-blue-500 text-white dark:md:hover:bg-blue-700">Logout</button>
         </div>
       </div>
     </header>
@@ -48,7 +50,7 @@ const Header = ({edit}) => (
     );
   };
 
-const HotelDetailPage = ({ hotel ,rev,edit,averagerev}) => {
+const HotelDetailPage = ({ hotel ,rev,edit,averagerev,logo,getbooking}) => {
   
   const facilityIcons = {
     "Free Wifi": "📶",
@@ -66,7 +68,7 @@ const HotelDetailPage = ({ hotel ,rev,edit,averagerev}) => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-        <Header edit={edit}/>
+      <Header edit={edit} logo={logo} getBooking={getbooking}/>
       <div className="container mx-auto p-4 pt-20">
         <div className="relative w-full h-[35rem] mb-8">
           <img
@@ -158,9 +160,9 @@ export default function ManagerHotel() {
   const [avgrev, setavgRev] = useState();
   const navigate = useNavigate();
 
+  const hotelId = Cookies.get('hotelId');
   useEffect(()=>{
-
-        const hotelId = Cookies.get('hotelId');
+    
             const handleHotelClick = async () => {
                 try {
                   // Fetch the detailed hotel information
@@ -180,10 +182,8 @@ export default function ManagerHotel() {
               
                   // Set the selected hotel details
                   setSelectedHotel(data.data.hotel);
-                  console.log("shyam",selectedHotel);
                   setReview(data.data.userWiseRatings);
                   setavgRev(data.data.allAverageRatings)
-                  console.log(data.data.userWiseRatings[0]);
               
                   // Update the URL to include the selected hotel's ID
                   // window.history.pushState({}, '', `/hotel/${hotel._id}`);
@@ -198,12 +198,22 @@ export default function ManagerHotel() {
   const editdata = ()=>{
     console.log(selectedHotel);
     navigate('/manager/addhotel',  { state: { selectedHotel } });
-    }
+  }
+
+  const getBooking = async () => {
+    navigate('/manager/BookingHistory',{state:{hotelId}});
+  }
+
+  const logoe=()=>{
+    Cookies.remove('hotelId');
+    toast.success("Logout successfully");
+    navigate('/');
+  } 
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       {selectedHotel ? (
-        <HotelDetailPage hotel={selectedHotel}  rev={review} edit={editdata} averagerev={avgrev}/>
+        <HotelDetailPage hotel={selectedHotel} rev={review} edit={editdata} averagerev={avgrev} logo={logoe} getbooking={getBooking}/>
       ) : (
         <>
           <div>i am shyam</div>

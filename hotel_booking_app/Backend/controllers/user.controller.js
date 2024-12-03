@@ -108,6 +108,8 @@ const handlegetPreviousBookings = asyncHandler(async (req, res) => {
             //console.log(hotel, booking);
             if (hotel && booking) {
                 const bookedHotel = {
+                    bookingId: booking._id,
+                    hotelId: hotel._id,
                     hotelName: hotel.hotelName,
                     checkInDate: booking.checkInDate,
                     checkOutDate: booking.checkOutDate,
@@ -124,7 +126,7 @@ const handlegetPreviousBookings = asyncHandler(async (req, res) => {
                 bookedHotels.push(bookedHotel);
             }
         };
-
+        
         // console.log("--->",book  edHotels);
         return res
             .status(200)

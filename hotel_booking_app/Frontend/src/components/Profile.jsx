@@ -113,7 +113,7 @@ export default function Profile() {
               </div>
             ))}
             <div className="grid grid-cols-[120px_1fr] items-center">
-              <label className="font-bold text-gray-600">User Type:</label>
+              <label className="font-bold text-gray-600">Customer Type:</label>
               <span className="text-gray-800">{user.userType}</span>
             </div>
           </div>

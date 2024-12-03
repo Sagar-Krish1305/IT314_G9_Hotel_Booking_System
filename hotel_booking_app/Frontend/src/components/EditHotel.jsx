@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import HotelField from './HotelField';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import config from '../config';
+import { toast } from 'react-toastify';
 
 
 const HotelForm = () => {
   
-const location = useLocation();
-const filledData = location.state?.selectedHotel;
+  const location = useLocation();
+  const navigate = useNavigate();    
+  
+  const filledData = location.state?.selectedHotel;
 
   const [hotelData, setHotelData] = useState({
     hotelName: filledData.hotelName,
@@ -73,7 +76,7 @@ const filledData = location.state?.selectedHotel;
       console.log(response);
       console.log('afdasdfas',response.data.data.hotel);
       console.log(response.data.data.success);
-
+      
 // try {
 //   const result = await axios.post(`${config.BACKEND_API}/api/user/signup`, data, {
 //     headers: {
@@ -82,7 +85,7 @@ const filledData = location.state?.selectedHotel;
 //     }
 //   });
       if (response.data.data?.success) {
-        alert('Hotel data submitted successfully!');
+        toast.success('Hotel data edit successfully!');
         setHotelData({
           hotelName: '',
           city: '',
@@ -97,8 +100,9 @@ const filledData = location.state?.selectedHotel;
           password: '',
           images: [],
         });
+        navigate('/manager/hotel');
       } else {
-        console.error('Error submitting hotel data');
+        console.error('Error In Editing hotel data');
       }
     } catch (error) {
       console.error('Error:', error);

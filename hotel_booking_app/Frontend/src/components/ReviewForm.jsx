@@ -3,6 +3,7 @@ import { FaStar } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import Cookies from 'js-cookie'
 import config from '../config';
+import { toast } from 'react-toastify';
 
 function ReviewForm() {
     const [rating, setRating] = useState(0);
@@ -12,13 +13,8 @@ function ReviewForm() {
     const [food, setFood] = useState(0);
     const [title, setTitle] = useState('');
     const [details, setDetails] = useState('');
-    const [tips, setTips] = useState('');
-    const [photos, setPhotos] = useState([]);
     const [certify, setCertify] = useState(false);
 
-    const handlePhotoUpload = (e) => {
-        setPhotos([...photos, ...e.target.files]);
-    };
 
     const navigate = useNavigate();
     const {id} = useParams();
@@ -34,8 +30,6 @@ function ReviewForm() {
             food,
             title,
             details,
-            tips,
-            photos: photos.map(photo => photo.name), // Only save file names
             certify,
         };
         
@@ -56,10 +50,10 @@ function ReviewForm() {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Success:', data);
-                alert('Review submitted successfully!');
+                toast.success('Review submitted successfully!');
             } else {
                 console.error('Failed:', response.status, response.statusText);
-                alert('Failed to submit the review. Please try again.');
+                toast.error('Failed to submit the review');
             }
 
             navigate( `/hotel/${id}`);

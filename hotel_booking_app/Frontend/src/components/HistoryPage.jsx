@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { CalendarDays, Users, CreditCard, Mail, User } from 'lucide-react'
 import Navbar2 from './Navbar_2'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from "react-toastify"
 import Cookies from "js-cookie"
 import config from '../config'
 
 const BookingHistoryCard = ({
   bookingId,
+  hotelId,
   hotelName,
   checkInDate,
   checkOutDate,
@@ -20,12 +21,18 @@ const BookingHistoryCard = ({
   hotelPhotoUrl,
   onCancel
 }) => {
+  const navigate = useNavigate();
+  
   const isWithin24Hours = () => {
     const checkIn = new Date(checkInDate)
     const now = new Date()
     const timeDiff = checkIn.getTime() - now.getTime()
     const hoursDiff = timeDiff / (1000 * 3600)
     return hoursDiff <= 24
+  }
+  const viewHotel = () => {
+    console.log("hotelId", hotelId);
+    navigate(`/hotel/${hotelId}`);
   }
 
   return (
@@ -112,6 +119,7 @@ const BookingHistoryCard = ({
             {isWithin24Hours() ? 'Cannot Cancel' : 'Cancel Booking'}
           </button>
           <button 
+            onClick={viewHotel}
             className="px-4 py-2 rounded-md font-medium transition-colors duration-200 ease-in-out bg-blue-600 text-white hover:bg-blue-700"
           >
             View Details
