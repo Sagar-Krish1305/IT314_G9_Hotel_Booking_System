@@ -63,7 +63,7 @@ function AboutUs() {
       <div className="relative h-[50vh] bg-gradient-to-b from-[#1e3a8a] to-[#3b82f6] flex items-center justify-center">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-20"></div>
         <div className="z-10 text-center text-white">
-          <h1 className="text-3xl font-bold mb-4">About BestLikeHome</h1>
+          <h1 className="text-3xl font-bold mb-4">About stayEazy</h1>
           <p className="text-l">Revolutionizing the Way You Book Hotels</p>
         </div>
       </div>
@@ -74,7 +74,7 @@ function AboutUs() {
           <div>
             <h2 className="text-2xl font-bold mb-6 text-[#1e3a8a]">Our Mission</h2>
             <p className="text-[#334155] leading-relaxed mb-6">
-              At BestLikeHome, we're committed to transforming the hotel booking experience through innovative technology and exceptional service. 
+              At stayEazy, we're committed to transforming the hotel booking experience through innovative technology and exceptional service. 
               Our platform combines cutting-edge features with user-friendly design to make finding and booking the perfect accommodation effortless.
             </p>
             <div className="grid grid-cols-2 gap-6">
@@ -169,24 +169,22 @@ function AboutUs() {
                 <Mail className="text-[#3b82f6] mt-1" />
                 <div>
                   <h3 className="text-l font-semibold text-[#1e3a8a] mb-2">Email Us</h3>
-                  <p className="text-[#334155]">support@stayease.com</p>
-                  <p className="text-[#334155]">business@stayease.com</p>
+                  <p className="text-[#334155]">stayeazy_support@gmail.com</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <Phone className="text-[#3b82f6] mt-1" />
                 <div>
                   <h3 className="text-l font-semibold text-[#1e3a8a] mb-2">Call Us</h3>
-                  <p className="text-[#334155]">+1 (555) 123-4567</p>
-                  <p className="text-[#334155]">+1 (555) 987-6543</p>
+                  <p className="text-[#334155]">+919664758178</p>
+                  <p className="text-[#334155]">+918460513372</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <MapPin className="text-[#3b82f6] mt-1" />
                 <div>
                   <h3 className="text-l font-semibold text-[#1e3a8a] mb-2">Visit Us</h3>
-                  <p className="text-[#334155]">123 Tech Hub Street</p>
-                  <p className="text-[#334155]">Silicon Valley, CA 94025</p>
+                  <p className="text-[#334155]">DAIICT, Gandhinagar</p>
                 </div>
               </div>
             </div>
