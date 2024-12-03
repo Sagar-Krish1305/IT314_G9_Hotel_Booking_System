@@ -3,6 +3,7 @@ import { CalendarDays, Users, CreditCard, Mail, User } from 'lucide-react'
 import Navbar2 from './Navbar_2'
 import { useLocation } from 'react-router-dom'
 import { toast } from "react-toastify"
+import Cookies from "js-cookie"
 import config from '../config'
 
 const BookingHistoryCard = ({
@@ -127,7 +128,7 @@ export default function BookingHistoryPage() {
 
   useEffect(() => {
     const initialBookings = location.state?.dataa || [];
-    const cancelledBookings = JSON.parse(localStorage.getItem('cancelledBookings') || '[]');
+    const cancelledBookings = JSON.parse(Cookies.get('cancelledBookings') || '[]');
     const filteredBookings = initialBookings.filter(booking => !cancelledBookings.includes(booking.bookingId));
     setBookings(filteredBookings);
   }, [location.state]);
@@ -160,9 +161,9 @@ export default function BookingHistoryPage() {
           setBookings(prevBookings => prevBookings.filter(booking => booking.bookingId !== bookingId));
           
           // Add the cancelled booking ID to local storage
-          const cancelledBookings = JSON.parse(localStorage.getItem('cancelledBookings') || '[]');
+          const cancelledBookings = JSON.parse(Cookies.get('cancelledBookings') || '[]');
           cancelledBookings.push(bookingId);
-          localStorage.setItem('cancelledBookings', JSON.stringify(cancelledBookings));
+          Cookies.set('cancelledBookings', JSON.stringify(cancelledBookings));
           
           toast.success('Booking cancelled successfully');
         } else {

@@ -145,34 +145,9 @@ function ReviewForm() {
                     ))}
                 </div>
 
-                {/* Room Tips */}
-                <label className="block text-lg font-semibold mb-2">Add a tip to help travelers choose a good room</label>
-                <input
-                    type="text"
-                    value={tips}
-                    onChange={(e) => setTips(e.target.value)}
-                    placeholder="E.g., Best views, quieter floors, accessibility, etc."
-                    className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
-                />
-
-                {/* Photo Upload */}
-                <label className="block text-lg font-semibold mb-2">Do you have photos to share? (Optional)</label>
-                <input
-                    type="file"
-                    multiple
-                    onChange={handlePhotoUpload}
-                    className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
-                />
-                <div className="flex flex-wrap gap-2 mb-4">
-                    {photos.map((photo, index) => (
-                        <span key={index} className="text-sm text-blue-500 underline">
-                            {photo.name}
-                        </span>
-                    ))}
-                </div>
 
                 {/* Certification */}
-                <label className="flex items-center mb-4">
+                <label className="flex items-center mb-4 mt-7">
                     <input
                         type="checkbox"
                         checked={certify}
@@ -183,7 +158,7 @@ function ReviewForm() {
                         I certify that this review is based on my own experience and is my genuine opinion of this
                         hotel, and that I have no personal or business relationship with this establishment, and have
                         not been offered any incentive or payment originating from the establishment to write this
-                        review. I understand that TripFinder has a zero-tolerance policy on fake reviews.
+                        review. I understand that stayEazy has a zero-tolerance policy on fake reviews.
                     </span>
                 </label>
 

@@ -5,6 +5,7 @@ import { Phone } from 'lucide-react';  // Import the Phone icon
 import HotelReview from './HotelReview';
 import Cookies from "js-cookie"
 import { useLocation, useNavigate } from "react-router-dom";
+import { SiHotelsdotcom } from "react-icons/si";
 import config from "../config";
 // import { Navigate } from "react-router-dom";
 
@@ -13,7 +14,12 @@ import config from "../config";
 const Header = ({edit}) => (
     <header className="fixed top-0 left-0 right-0 bg-white z-10 shadow-md">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
-        <h1 className="text-lg font-semibold text-blue-500">StayEasy</h1>
+        <div className="flex items-center space-x-2">
+            <SiHotelsdotcom className={`text-2xl text-blue-600`} />
+            <span className={`text-2xl font-bold text-blue-600`}>
+              stayEazy
+            </span>
+          </div>
         <div className="flex gap-4">
     
           <button type="button" onClick={edit} className="text-sm p-4 rounded-md bg-blue-500 text-white dark:md:hover:bg-blue-700">Edit hotel Details</button>
@@ -23,7 +29,26 @@ const Header = ({edit}) => (
     </header>
   )
 
-const HotelDetailPage = ({ hotel ,rev,edit}) => {
+  const renderAverageRating = (label, value) => {
+    const percentage = (parseFloat(value) / 5) * 100; // Calculate the fill percentage based on a 5-star scale
+  
+    return (
+      <div className="mb-4">
+        <div className="flex justify-between items-center">
+          <span className="text-blue-600 font-semibold">{label}</span>
+          <span className="text-gray-600 font-medium">({value})</span>
+        </div>
+        <div className="relative mt-2 h-2 w-full bg-gray-300 rounded-full">
+          <div
+            className="absolute h-2 bg-blue-600 rounded-full"
+            style={{ width: `${percentage}%` }} // Adjust the width dynamically
+          ></div>
+        </div>
+      </div>
+    );
+  };
+
+const HotelDetailPage = ({ hotel ,rev,edit,averagerev}) => {
   
   const facilityIcons = {
     "Free Wifi": "📶",
@@ -94,19 +119,31 @@ const HotelDetailPage = ({ hotel ,rev,edit}) => {
 
              
               }
-
-
               </div>
             </div>
+
+
+            <div className="mb-12">
+              <h2 className="text-3xl font-semibold mb-6">Average Ratings</h2>
+              <h2 className="text-lg font-semibold mb-6">{rev.length} Ratings</h2>
+              <div>
+                {renderAverageRating('Overall', averagerev?.averageOverallRatings)}
+                {renderAverageRating('Cleanliness', averagerev?.averageCleanlinessRatings)}
+                {renderAverageRating('Food', averagerev?.averageFoodRatings)}
+                {renderAverageRating('Rooms', averagerev?.averageRoomsRatings)}
+                {renderAverageRating('Service', averagerev?.averageServiceRatings)}
+              </div>
+            </div>
+
+
             <div className="mb-12">
               <h2 className="text-3xl font-semibold mb-6">Reviews</h2>
 
-              {rev.map((r, index) => (
-                  <div className="flex-col mt-3 rounded-sm">
-                   <HotelReview key={index} review={r}/>  
-                   </div>
-                ))
-              }
+              {rev.length > 0 ? (rev?.map((r, index) => (
+                  <div className="flex-col mt-3 rounded-sm" key={index}>
+                    <HotelReview review={r}/>  
+                  </div>
+                ))) : <h2 className="text-2xl text-gray-500 "><b>No reviews</b></h2>}  
             </div>
           </div>
         </div>
@@ -118,6 +155,7 @@ const HotelDetailPage = ({ hotel ,rev,edit}) => {
 export default function ManagerHotel() {
   const [selectedHotel, setSelectedHotel] = useState(null)
   const [review, setReview] = useState([])
+  const [avgrev, setavgRev] = useState();
   const navigate = useNavigate();
 
   useEffect(()=>{
@@ -144,6 +182,7 @@ export default function ManagerHotel() {
                   setSelectedHotel(data.data.hotel);
                   console.log("shyam",selectedHotel);
                   setReview(data.data.userWiseRatings);
+                  setavgRev(data.data.allAverageRatings)
                   console.log(data.data.userWiseRatings[0]);
               
                   // Update the URL to include the selected hotel's ID
@@ -164,7 +203,7 @@ export default function ManagerHotel() {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       {selectedHotel ? (
-        <HotelDetailPage hotel={selectedHotel}  rev={review} edit={editdata}/>
+        <HotelDetailPage hotel={selectedHotel}  rev={review} edit={editdata} averagerev={avgrev}/>
       ) : (
         <>
           <div>i am shyam</div>

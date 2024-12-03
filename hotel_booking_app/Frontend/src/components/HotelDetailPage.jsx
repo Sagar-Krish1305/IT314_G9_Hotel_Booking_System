@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react"
 import { MapPin, Calendar, Users, Search, Star, Menu, Mail, Phone, ChevronLeft, ChevronRight } from 'lucide-react'
 import HotelReview from './HotelReview';
@@ -11,12 +12,14 @@ import { toast } from "react-toastify";
 import config from "../config";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaRupeeSign } from "react-icons/fa";
+import { FaStar } from 'react-icons/fa';
 
 export default function HotelDetailPage () {
     const {id} = useParams();
     const navigate = useNavigate();
     const [hotel, setHotel] = useState();
-    const [rev, setRev] = useState();
+    const [rev, setRev] = useState([]);
+    const [avgrev, setavgRev] = useState([]);
     const [checkInDate,setCheckInDate] = useState();
     const [checkOutDate,setCheckOutDate] = useState();
     const [requiredRooms,setrequiredRooms] = useState();
@@ -46,6 +49,8 @@ export default function HotelDetailPage () {
           
           setHotel(data.data.hotel);
           setRev(data.data.userWiseRatings);
+          setavgRev(data.data.allAverageRatings);
+          console.log("ssssssss- ",data);
 
         } catch (error) {
           console.error("Error fetching hotel details:", error);
@@ -81,6 +86,28 @@ export default function HotelDetailPage () {
     const handleDecrement = () => {
       if (adults > 1) setAdults(adults - 1);
     };
+
+    ////////////
+    const renderAverageRating = (label, value) => {
+      const percentage = (parseFloat(value) / 5) * 100; // Calculate the fill percentage based on a 5-star scale
+    
+      return (
+        <div className="mb-4">
+          <div className="flex justify-between items-center">
+            <span className="text-blue-600 font-semibold">{label}</span>
+            <span className="text-gray-600 font-medium">({value})</span>
+          </div>
+          <div className="relative mt-2 h-2 w-full bg-gray-300 rounded-full">
+            <div
+              className="absolute h-2 bg-blue-600 rounded-full"
+              style={{ width: `${percentage}%` }} // Adjust the width dynamically
+            ></div>
+          </div>
+        </div>
+      );
+    };
+    
+    //////////
   
     const facilityIcons = {
       "Free Wifi": "📶",
@@ -174,6 +201,21 @@ export default function HotelDetailPage () {
                   </span>
                 </div>
               </div>
+              
+
+              <div className="mb-12">
+              <h2 className="text-3xl font-semibold mb-6">Average Ratings</h2>
+              <h2 className="text-lg font-semibold mb-6">{rev.length} Ratings</h2>
+              <div>
+                {renderAverageRating('Overall', avgrev?.averageOverallRatings)}
+                {renderAverageRating('Cleanliness', avgrev?.averageCleanlinessRatings)}
+                {renderAverageRating('Food', avgrev?.averageFoodRatings)}
+                {renderAverageRating('Rooms', avgrev?.averageRoomsRatings)}
+                {renderAverageRating('Service', avgrev?.averageServiceRatings)}
+              </div>
+            </div>
+
+
               <div className="mb-12">
                 <h2 className=" flex text-3xl font-semibold mb-6">Reviews
                   <div className="ml-96 text-xl">
@@ -182,11 +224,11 @@ export default function HotelDetailPage () {
                     </button>
                   </div>
                 </h2>
-                {rev?.map((r, index) => (
+                {rev.length > 0 ? (rev?.map((r, index) => (
                   <div className="flex-col mt-3 rounded-sm" key={index}>
                     <HotelReview review={r}/>  
                   </div>
-                ))}
+                ))) : <h2 className="text-2xl text-gray-500 "><b>No reviews</b></h2>}  
               </div>
             </div>
             <div className="w-full lg:w-1/3">
@@ -262,7 +304,3 @@ export default function HotelDetailPage () {
       </div>
     )
   }
-
-
-
-

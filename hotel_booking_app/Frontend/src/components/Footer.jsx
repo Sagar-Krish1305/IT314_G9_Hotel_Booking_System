@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiHome } from 'react-icons/fi';
 import FooterBg from '../assets/footer-bg.jpg';
+import { SiHotelsdotcom } from "react-icons/si";
 
 function Footer() {
   return (
@@ -17,22 +18,17 @@ function Footer() {
       <div className="relative z-10">
         <div className="footer-logo mb-5">
           <Link to="/" className="no-underline flex items-center justify-center">
-            <FiHome className="text-4xl text-[#007b7b] mr-2" />
-            <span className="text-[#007b7b] font-bold text-2xl">Hotel Booking.</span>
+          <SiHotelsdotcom className="text-4xl text-[#00127b] mr-2" />
+            <span className="text-[#007b7b] font-bold text-2xl">stayEazy</span>
           </Link>
         </div>
 
         <nav className="flex justify-center gap-10 mb-5">
-          <a href="#" className="text-base text-gray-700 font-bold hover:text-[#007b7b] transition-colors duration-300">Hotels</a>
-          <a href="#" className="text-base text-gray-700 font-bold hover:text-[#007b7b] transition-colors duration-300">Listing</a>
-          <a href="#" className="text-base text-gray-700 font-bold hover:text-[#007b7b] transition-colors duration-300">Pricing</a>
-          <a href="#" className="text-base text-gray-700 font-bold hover:text-[#007b7b] transition-colors duration-300">Privacy</a>
-          <Link to="/members" className="text-base text-gray-700 font-bold hover:text-[#007b7b] transition-colors duration-300">Members</Link>
           <Link to="/about" className="text-base text-gray-700 font-bold hover:text-[#007b7b] transition-colors duration-300">About Us</Link>
         </nav>
 
         <div className="text-sm text-gray-400 font-bold mt-5">
-          ©️ 2024 Hotel Booking. All rights reserved.
+          ©️ 2024 stayEazy. All rights reserved.
         </div>
       </div>
 

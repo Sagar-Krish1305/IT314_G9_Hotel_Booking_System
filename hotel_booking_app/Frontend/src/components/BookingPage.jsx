@@ -2,6 +2,8 @@ import React from 'react';
 import { useState, useEffect } from "react"
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Cookies from 'js-cookie'
+import { toast } from "react-toastify";
+import { SiHotelsdotcom } from 'react-icons/si';
 import config from '../config';
 
 const BookingPage = () => {
@@ -64,6 +66,7 @@ const BookingPage = () => {
             }
 
             const data = await response.json();
+            toast.success("Booking successful");
             console.log('Booking confirmed:', data.data);
             navigate(`/hotel/${id}`);
         } catch (err) {
@@ -84,8 +87,12 @@ const BookingPage = () => {
         <div className="min-h-screen bg-gray-50">
             <header className="bg-white shadow-lg p-3">
                 <div className="flex items-center space-x-2">
-                    <img src="https://img.freepik.com/premium-vector/hotel-booking-logo-design_675581-44.jpg?w=1060" alt="TripFinder Logo" className="h-6 w-6" />
-                    <span className="text-blue-500 text-lg font-semibold">TripFinder</span>
+                <div className="flex items-center space-x-2">
+                    <SiHotelsdotcom className={`text-2xl text-blue-600`} />
+                    <span className={`text-2xl font-bold text-blue-600`}>
+                    stayEazy
+                    </span>
+                </div>
                 </div>
             </header>
 
@@ -172,7 +179,7 @@ const BookingPage = () => {
 
                 <div className="lg:w-1/3 xl:w-1/4 bg-white p-5 shadow-lg rounded-lg">
                     <div className="flex justify-between items-center mb-3">
-                        <h2 className="text-lg font-semibold">Hotel O Relax Inn</h2>
+                        <h2 className="text-lg font-semibold">{bookdata.hotelName}</h2>
                         <span className="text-xs bg-blue-500 text-white rounded-md px-1 py-0.5">NEW</span>
                     </div>
                     <p className="text-xs text-gray-500 mb-3">{`${stayDuration} - Night${stayDuration > 1 ? 's' : ''}`}</p>

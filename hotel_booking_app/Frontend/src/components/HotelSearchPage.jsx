@@ -88,7 +88,6 @@ const SearchBar = ({ onSearch ,dataa}) => {
         </div>
       </div>
 
-
                     {/* Guests Counter */}
                     <div className="flex-1 min-w-[150px]">
                 <label htmlFor="guests" className="sr-only">Guests</label>
@@ -121,30 +120,28 @@ const SearchBar = ({ onSearch ,dataa}) => {
 }
 
 
-
-
 export default function HotelSearchPage() {
-  const [hotels, setHotels] = useState([])
-  const [selectedHotel, setSelectedHotel] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [review, setReview] = useState([])
+  const [hotels, setHotels] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [sortOption, setSortOption] = useState('');
   const location = useLocation();
-  const data = location.state?.data; 
+  const data = location.state?.data;
   const flag = location.state?.flag;
+
   const ff = {
-    city : data.location,
-    checkIn : data.checkInDate,
-    checkOut : data.checkOutDate,
-    guests : data.guests
-  }
+    city: data.location,
+    checkIn: data.checkInDate,
+    checkOut: data.checkOutDate,
+    guests: data.guests,
+  };
 
   useEffect(() => {
     const handleSearch2 = async () => {
       if (flag) {
         setLoading(true);
         setError(null);
-  
+
         try {
           const response = await fetch(`${config.BACKEND_ID}/api/v1/hotels/search`, {
             method: 'POST',
@@ -153,11 +150,11 @@ export default function HotelSearchPage() {
             },
             body: JSON.stringify(ff),
           });
-  
+
           if (!response.ok) {
             throw new Error('Failed to fetch search results');
           }
-  
+
           const dataaa = await response.json();
           console.log("s-", dataaa.data);
           setHotels(dataaa.data);
@@ -169,14 +166,13 @@ export default function HotelSearchPage() {
         }
       }
     };
-  
+
     handleSearch2();
   }, []); 
 
   const handleSearch = async (searchParams) => {
-    setLoading(true)
-    setError(null)
-
+    setLoading(true);
+    setError(null);
 
     try {
       const response = await fetch(`${config.BACKEND_ID}/api/v1/hotels/search`, {
@@ -185,86 +181,78 @@ export default function HotelSearchPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(searchParams),
-      })
-
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch search results')
+        throw new Error('Failed to fetch search results');
       }
 
-
-      const data = await response.json()
-      console.log("s-",data.data)
-      setHotels(data.data)
+      const data = await response.json();
+      console.log("s-", data.data);
+      setHotels(data.data);
     } catch (err) {
-      setError(err.message)
-      console.error("Error fetching hotels:", err)
+      setError(err.message);
+      console.error("Error fetching hotels:", err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  
+  const handleSortChange = (e) => {
+    const selectedOption = e.target.value;
+    setSortOption(selectedOption);
 
+    if (selectedOption === 'low-to-high') {
+      setHotels((prevHotels) => [...prevHotels].sort((a, b) => a.hotelData.pricePerNight - b.hotelData.pricePerNight));
+    } else if (selectedOption === 'high-to-low') {
+      setHotels((prevHotels) => [...prevHotels].sort((a, b) => b.hotelData.pricePerNight - a.hotelData.pricePerNight));
+    }
+  };
 
-
-    const navigate = useNavigate();
-    const handleHotelClick = (hotel_id) => navigate(`/hotel/${hotel_id}`);
-
-  
-  
-
-
-  const handleBackToSearch = () => {
-    setSelectedHotel(null)
-    window.history.pushState({}, '', '/')
-  }
-
+  const navigate = useNavigate();
+  const handleHotelClick = (hotel_id) => navigate(`/hotel/${hotel_id}`);
 
   return (
     <>
-    <Navbar2/>
-        <div className="min-h-screen bg-gray-100 p-4">
-      {/* {selectedHotel ? (
-        <HotelDetailPage hotel={selectedHotel} onBack={handleBackToSearch} rev={review}/>
-      ) : ( */}
-        <>
-          <div className="container mx-auto pt-20">
-
-            <div className="flex justify-between">
+      <Navbar2 />
+      <div className="min-h-screen bg-gray-100 p-4">
+        <div className="container mx-auto pt-20">
+          <div className="flex justify-between">
             <h1 className="text-3xl font-bold mb-6">Find Your Perfect Stay</h1>
             <div className="flex items-center space-x-2">
               <label htmlFor="sort" className="text-gray-600 mb-2">Sort by:</label>
               <select
                 id="sort"
-                //value={sortOption}
-                //onChange={handleSortChange}
-                className=" mb-2 border border-gray-300 rounded px-3 py-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={sortOption}
+                onChange={handleSortChange}
+                className="mb-2 border border-gray-300 rounded px-3 py-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select</option>
                 <option value="low-to-high">Price: Low to High</option>
                 <option value="high-to-low">Price: High to Low</option>
               </select>
             </div>
-            </div>
-            <SearchBar onSearch={handleSearch} dataa={data}/>
-            {loading && <div className="text-center">Loading...</div>}
-            {error && <div className="text-center text-red-500">{error}</div>}
-            {!loading && !error && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {hotels.map((hotel) => (
-                  <HotelCard key={hotel._id} hotel={hotel.hotelData} onClick={()=>handleHotelClick(hotel.hotelData._id)} />
-                ))}
-              </div>
-            )}
           </div>
-        </>
-      {/* )} */}
-    </div>
+          <SearchBar onSearch={handleSearch} dataa={data} />
+          {loading && <div className="text-center">Loading...</div>}
+          {error && <div className="text-center text-red-500">{error}</div>}
+          {!loading && !error && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {hotels.map((hotel) => (
+                <HotelCard
+                  key={hotel._id}
+                  hotel={hotel.hotelData}
+                  onClick={() => handleHotelClick(hotel.hotelData._id)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </>
-    
-  )
+  );
 }
+
 const HotelCard = ({ hotel, onClick }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -280,8 +268,8 @@ const HotelCard = ({ hotel, onClick }) => {
     );
   };
 
-  return(
-    <div className="bg-white rounded-xl m-4 shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105">
+  return (
+    <div className="bg-white rounded-xl m-4 shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 flex flex-col justify-between h-full">
       <div className="relative w-full h-64">
         <div
           className="flex transition-transform duration-500 ease-in-out h-full"
@@ -311,22 +299,19 @@ const HotelCard = ({ hotel, onClick }) => {
           <ChevronRight size={20} />
         </button>
       </div>
-      <div className="p-6">
+      <div className="p-6 flex-grow">
         <h3 className="font-bold text-xl mb-2 text-gray-800">{hotel.hotelName}</h3>
-        <p className="text-gray-600 text-sm mb-4 flex items-center">
+        <p className="text-gray-600 text-sm mb-2 flex items-center">
           <MapPin size={16} className="mr-1" />
           {hotel.address}
         </p>
-        <div className="flex  items-center mb-4 text-blue-700">
-          {/* <p className="text-2xl font-bold text-blue-600 flex"> */}
-                <FaRupeeSign classname="bg-blue-700"/> {hotel.pricePerNight}
-            <span className="text-sm font-normal text-gray-600">/night</span>
-         {/* </p> */}
-          {/* <div className="flex items-center bg-blue-100 px-2 py-1 rounded-full">
-            <Star className="text-yellow-500 mr-1" size={16} />
-            <span className="text-sm font-semibold text-blue-800">{hotel.ratings.toFixed(1)}</span>
-          </div> */}
+        <div className="flex items-center mb-2 text-blue-700">
+          <FaRupeeSign className="mr-1" />
+          {hotel.pricePerNight}
+          <span className="text-sm font-normal text-gray-600">/night</span>
         </div>
+      </div>
+      <div className="p-6 pt-2">
         <button
           onClick={() => onClick(hotel._id)}
           className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center font-semibold"
@@ -337,7 +322,6 @@ const HotelCard = ({ hotel, onClick }) => {
       </div>
     </div>
   );
-}  
-
+};
 
 
